@@ -2,6 +2,31 @@ from flask import Flask, redirect, render_template
 
 app = Flask(__name__)
 
+courses = [
+    {
+        'course_id': 'ITSC-3146',
+        'course_name': 'Intro to Operating Systems and Networking',
+        'description': 'Class Description',
+        'teacher': 'Harini Ramaprasad',
+        'comments': [
+            'This course was hard.',
+            'It was so much work!',
+            'I thought it was not too bad.'
+        ]
+    },
+    {
+        'course_id': 'ITSC-3155',
+        'course_name': 'Intro to Software Engineering',
+        'description': 'Class Description',
+        'teacher': 'Jacob Krevat',
+        'comments': [
+            'This course was hard.',
+            'It was so much work!',
+            'I thought it was not too bad.'
+        ]
+    }
+]
+
 @app.get('/')
 def index():
     # Loads the Home Page.
