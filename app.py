@@ -1,6 +1,7 @@
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect, render_template, url_for, session
 
 app = Flask(__name__)
+app.secret_key = 'super_secret_key'
 
 courses = [
     {
@@ -59,8 +60,23 @@ def edit_course():
     # Make sure previous details are autofilled into the form.
     return render_template('course_edit_page.html')
 
-@app.post('/courses/<int:course_id/edit')
+@app.post('/courses/<int:course_id>/edit')
 def submit_edit_course():
     # Makes post request to change the courses data on the database.
     # Add code to pull the data from the html edit page and make changes to the course
     return redirect('/courses/<int:course_id>')
+
+
+@app.route('/login')
+def login():
+    #This is for after someone logs in the navbar will change to say "Welcome, John" or whatever
+    # After successful login, set the user's name in the session.
+    session['username'] = 'John Doe'  # Example user name
+    return redirect(url_for('index'))
+
+@app.route('/logout')
+def logout():
+    #This is for after someone logs in the navbar will change to say "Welcome, John" or whatever
+    # After successful login, set the user's name in the session.
+    session['username'] = ''  # Example user name
+    return redirect(url_for('index'))

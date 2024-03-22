@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+    <style>
+        .custom-navbar-color {
+            background-color: #deded5;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg custom-navbar-color">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="static/images/logo.gif" alt="Logo" style="height: 50px;">
+            </a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                </ul>
+                <div class="d-flex me-2">
+                    {% if session.username %}
+                    <span class="navbar-text me-3">Welcome, {{ session.username }}</span>
+                    <a href="/logout" class="btn btn-dark">Logout</a>
+                    {% else %}
+                    <a href="/login" class="btn btn-light me-2" style="width: 150px;">Log In</a>
+                    <a href="#" class="btn btn-dark" style="width: 150px;">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% block content %}
+    {% endblock %}
+    <footer style="background-color: #deded5;">
+        <div class="container p-4">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <h5 class="mb-3" style="letter-spacing: 2px; color: #818963;">footer content</h5>
+                    <p>
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste atque ea quis
+                        molestias. Fugiat pariatur maxime quis culpa corporis vitae repudiandae aliquam
+                        voluptatem veniam, est atque cumque eum delectus sint!
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="mb-3" style="letter-spacing: 2px; color: #818963;">links</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-1">
+                            <a href="#!" style="color: #4f4f4f;">Frequently Asked Questions</a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#!" style="color: #4f4f4f;">Course Search</a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="#!" style="color: #4f4f4f;">Login</a>
+                        </li>
+                        <li>
+                            <a href="#!" style="color: #4f4f4f;">Sign Up</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <a class="navbar-brand" href="#">
+                        <img src="static/images/logo.gif" alt="Logo">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2024 Copyright: RateMyCourse
+            <!--<a class="text-dark" href="https://mdbootstrap.com/">RateMyCourse</a> -->
+        </div>
+        <!-- Copyright -->
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
