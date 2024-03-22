@@ -76,7 +76,6 @@ def login():
 
 @app.route('/logout')
 def logout():
-    #This is for after someone logs in the navbar will change to say "Welcome, John" or whatever
-    # After successful login, set the user's name in the session.
-    session['username'] = ''  # Example user name
+    #This is for after someone logs out it'll go back to showing Log in Sign up buttons
+    session['username'] = ''  
     return redirect(url_for('index'))
