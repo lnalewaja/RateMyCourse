@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, url_for, session
+from flask import Flask, redirect, render_template, url_for, session, request
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
@@ -35,8 +35,14 @@ def index():
 
 @app.get('/courses')
 def load_courses():
-    # Loads Courses Page - shows all courses.
-    return render_template('coureses.html')
+    search_query = request.args.get('search_query', '')  # Get the search query from the request
+    if search_query:
+        # Filter courses based on the search query
+        filtered_courses = [course for course in courses if search_query.lower() in course['course_name'].lower()]
+        return render_template('courses.html', courses=filtered_courses, search_query=search_query)
+    else:
+        return render_template('courses.html', courses=courses)
+
 
 @app.get('/courses/new')
 def add_page():
