@@ -1,4 +1,5 @@
 from flask import Flask, redirect, render_template, url_for, session, request
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
@@ -83,12 +84,32 @@ def submit_edit_course():
     return redirect('/courses/<int:course_id>')
 
 
-@app.route('/login')
+users = {
+    'test_user': {
+        'username': 'test_user',
+        'password_hash': generate_password_hash('test_password')
+    }
+}
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    #This is for after someone logs in the navbar will change to say "Welcome, John" or whatever
-    # After successful login, set the user's name in the session.
-    session['username'] = 'John Doe'  # Example user name
-    return redirect(url_for('index'))
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        user = users.get(username)
+
+        # Check if user exists and password is correct
+        if user and check_password_hash(user['password_hash'], password):
+            # If valid, we could log them in and store the user id in the session
+            session['username'] = user['username']
+            return redirect(url_for('index'))
+        else:
+            # If user doesn't exist or password is wrong, reload the page with an error
+            return render_template('login.html', error="Invalid username or password")
+    
+    # For a GET request, just render the template
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
