@@ -12,6 +12,14 @@ courses = [
         'comments': [
             'This course was hard.',
             'It was so much work!',
+            'This course was hard.',
+            'It was so much work!',
+            'This course was hard.',
+            'It was so much work!',
+            'This course was hard.',
+            'It was so much work!',
+            'This course was hard.',
+            'It was so much work!',
             'I thought it was not too bad.'
         ]
     },
@@ -60,6 +68,7 @@ def course_page(course_id):
     for course in courses:
         if course['course_id'] == course_id:
             return render_template('course_details.html', course=course)
+    return 'Course not found', 404
 
 @app.get('/courses/<string:course_id>/edit')
 def edit_course():
