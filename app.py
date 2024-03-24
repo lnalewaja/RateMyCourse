@@ -37,20 +37,22 @@ courses = [
     }
 ]
 
+
 @app.get('/')
 def index():
     # Loads the Home Page.
     return render_template('index.html')
 
-@app.get('/courses')
+@app.get('/course_page')
 def load_courses():
     search_query = request.args.get('search_query', '')  # Get the search query from the request
     if search_query:
         # Filter courses based on the search query
         filtered_courses = [course for course in courses if search_query.lower() in course['course_name'].lower()]
-        return render_template('courses.html', courses=filtered_courses, search_query=search_query)
+        return render_template('course_page.html', courses=filtered_courses, search_query=search_query)
     else:
-        return render_template('courses.html', courses=courses)
+        return render_template('course_page.html', courses=courses)
+
 
 
 @app.get('/courses/new')
