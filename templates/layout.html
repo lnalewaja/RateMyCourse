@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='style/style.css') }}">
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='style/style.css') }}">
 
 <head>
     <meta charset='utf-8'>
@@ -31,7 +31,16 @@
                         <a class="nav-link active" aria-current="page" href="{{ url_for('load_courses') }}">Courses</a>
                     </li>
                 </ul>
-                <div class="d-flex me-2">
+                {% if not no_search_bar %}
+                <div class="mx-auto">
+                    <form action="{{ url_for('load_courses') }}" method="GET" class="d-flex">
+                        <input type="text" class="form-control" placeholder="Course Search"
+                            name="search_query">
+                        <button class="btn btn-outline-primary" type="submit">Search</button>
+                    </form>
+                </div>
+                {% endif %}
+                <div class="d-flex ms-auto">
                     {% if session.username %}
                     <span class="navbar-text me-3">Welcome, {{ session.username }}</span>
                     <a href="/logout" class="btn btn-dark">Logout</a>

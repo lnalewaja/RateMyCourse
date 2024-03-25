@@ -41,7 +41,7 @@ courses = [
 @app.get('/')
 def index():
     # Loads the Home Page.
-    return render_template('index.html')
+    return render_template('index.html', no_search_bar=True)
 
 @app.get('/course_page')
 def load_courses():
