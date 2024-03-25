@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='style/style.css') }}">
 
 <head>
     <meta charset='utf-8'>
@@ -18,18 +19,28 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg custom-navbar-color">
+    <nav class="navbar navbar-expand-lg custom-navbar-color" style="position: fixed; width: 100%;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="static/images/logo.gif" alt="Logo" style="height: 50px;">
+                <img src="/static/images/logo.gif" alt="Logo" style="height: 50px;">
             </a>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    <li class="nav-item" style="display: flex;">
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('load_courses') }}">Courses</a>
                     </li>
                 </ul>
-                <div class="d-flex me-2">
+                {% if not no_search_bar %}
+                <div class="mx-auto">
+                    <form action="{{ url_for('load_courses') }}" method="GET" class="d-flex">
+                        <input type="text" class="form-control" placeholder="Course Search"
+                            name="search_query">
+                        <button class="btn btn-outline-primary" type="submit">Search</button>
+                    </form>
+                </div>
+                {% endif %}
+                <div class="d-flex ms-auto">
                     {% if session.username %}
                     <span class="navbar-text me-3">Welcome, {{ session.username }}</span>
                     <a href="/logout" class="btn btn-dark">Logout</a>
@@ -41,9 +52,11 @@
             </div>
         </div>
     </nav>
-    {% block content %}
-    {% endblock %}
-    <footer style="background-color: #deded5;">
+    <div style="padding: 2.5%; padding-bottom: 100px; padding-top: 100px;">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <footer style="background-color: #deded5; bottom: 0; width: 100%;">
         <div class="container p-4">
             <div class="row">
                 <div class="col-lg-6 col-md-12 mb-4">
@@ -73,7 +86,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
                     <a class="navbar-brand" href="#">
-                        <img src="static/images/logo.gif" alt="Logo">
+                        <img src="/static/images/logo.gif" alt="Logo">
                     </a>
                 </div>
             </div>
