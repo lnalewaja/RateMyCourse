@@ -40,6 +40,12 @@ courses = [
         ]
     }
 ]
+users = {
+    'test_user': {
+        'username': 'test_user',
+        'password_hash': generate_password_hash('test_password')
+    }
+}
 
 
 @app.get('/')
@@ -97,6 +103,8 @@ def submit_edit_course(course_id):
     if new_rating:
         new_rating = int(new_rating)
 
+
+
     # Update the course data in the database (or your courses list)
     for course in courses:
         if course['course_id'] == course_id:
@@ -119,6 +127,7 @@ def submit_edit_course(course_id):
 
     # Redirect to the course detail page after editing
     return redirect(f'/courses/{course_id}')
+
 
 
 
