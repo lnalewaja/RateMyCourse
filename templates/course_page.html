@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="container">
+        <!-- Feature Box like in the provided image -->
+        <div class="container">
+            <!-- Feature Box with Background Image -->
+            <div id="custom-feature-box" class="feature-box text-white p-5 my-5 position-relative">
+                <div class="position-relative">
+                    <h2 class="text-white">Explore Courses</h2>
+                    <p class="text-white">Click on any course to learn more!</p>
+                    <p class="text-white">Explore Courses: Professors, Student Reviews, and Comprehensive Information at Your Fingertips!</p>
+                </div>
+            </div>
+        
+        
+
+        <!-- Search bar -->
+        <form action="/courses" method="GET">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Search for a course here" name="search_query">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </div>
+        </form> 
+
+
+        
+        <!-- Course boxes/bubbles -->
+        <style>
+            .course-bubble {
+                background-color: #f0f0f0;
+                border-radius: 20px; 
+                padding: 20px;
+                margin-bottom: 20px;
+                width: calc(100% - 40px); 
+                box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); 
+                position: relative; 
+            }
+
+            .course-bubble h3 {
+                margin-top: 0;
+            }
+
+            .course-bubble a {
+                position: absolute;
+                bottom: 20px; 
+                right: 20px; 
+                margin-top: 15px;
+                font-size: 14px; 
+                padding: 8px 12px; 
+            }
+
+            
+            
+        </style>
+
+        {% for course in courses %}
+            <div class="course-bubble">
+                <h3>{{ course.course_name }}</h3>
+                <a href="/courses/{{ course.course_id }}" class="btn btn-primary">View More</a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
