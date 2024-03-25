@@ -10,6 +10,8 @@ courses = [
         'course_name': 'Intro to Operating Systems and Networking',
         'description': 'Class Description',
         'teacher': 'Harini Ramaprasad',
+        'rating': 3,  # test rating
+        'grade': 'B',  # test grade
         'comments': [
             'This course was hard.',
             'It was so much work!',
@@ -29,6 +31,8 @@ courses = [
         'course_name': 'Intro to Software Engineering',
         'description': 'Class Description',
         'teacher': 'Jacob Krevat',
+        'rating': 4,  # test rating
+        'grade': 'A',  # test grade
         'comments': [
             'This course was hard.',
             'It was so much work!',
@@ -36,6 +40,12 @@ courses = [
         ]
     }
 ]
+users = {
+    'test_user': {
+        'username': 'test_user',
+        'password_hash': generate_password_hash('test_password')
+    }
+}
 
 
 @app.get('/')
@@ -74,24 +84,57 @@ def course_page(course_id):
     return 'Course not found', 404
 
 @app.get('/courses/<string:course_id>/edit')
-def edit_course():
-    # Loads the Edit Page.
-    # Make sure previous details are autofilled into the form.
-    return render_template('course_edit_page.html')
+def edit_course(course_id):
+    course = next((c for c in courses if c['course_id'] == course_id), None)
+    if course:
+        return render_template('course_edit_page.html', course=course)
+    else:
+        return "Course not found", 404
+
 
 @app.post('/courses/<string:course_id>/edit')
-def submit_edit_course():
-    # Makes post request to change the courses data on the database.
-    # Add code to pull the data from the html edit page and make changes to the course
-    return redirect('/courses/<int:course_id>')
+def submit_edit_course(course_id):
+    # Fetch the updated data from the form
+    new_rating = request.form.get('rating')
+    new_grade = request.form.get('final_grade')
+    new_comment = request.form.get('new_comment')
+
+    # Convert rating to an integer if it's not empty
+    if new_rating:
+        new_rating = int(new_rating)
 
 
-users = {
-    'test_user': {
-        'username': 'test_user',
-        'password_hash': generate_password_hash('test_password')
-    }
-}
+
+    # Update the course data in the database (or your courses list)
+    for course in courses:
+        if course['course_id'] == course_id:
+            # Update only the fields that have been provided in the form
+            if new_rating is not None:
+                course['rating'] = new_rating
+            if new_grade:
+                course['grade'] = new_grade
+            # Update existing comments
+            for i, comment in enumerate(course['comments']):
+                updated_comment = request.form.get(f'comment_{i+1}')  # Get updated comment from form
+                if updated_comment:
+                    course['comments'][i] = updated_comment
+            # Add new comment if provided
+            if new_comment:
+                course['comments'].append(new_comment)
+            break
+    else:
+        return 'Course not found', 404
+
+    # Redirect to the course detail page after editing
+    return redirect(f'/courses/{course_id}')
+
+
+
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

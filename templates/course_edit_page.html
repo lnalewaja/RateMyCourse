@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Comment for {{ session['username'] }}</title>
+    <style>
+        /* Style to display form elements and headers */
+        body {
+            text-align: center;
+            /* Align the content in the center */
+        }
+
+        .form-container {
+            display: inline-block;
+            /* Center the form horizontally */
+            text-align: left;
+            /* Reset text alignment for form content */
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-row label {
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: larger;
+        }
+
+        .form-row textarea {
+            width: 100%;
+            resize: vertical;
+            /* Allow vertical resizing */
+        }
+
+        .comment {
+            padding: 5px;
+            border: 1px solid lightgray;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <h1>Edit Comment for {{ session['username'] }}</h1>
+        <form action="/courses/{{ course.course_id }}/edit" method="post">
+            <div class="form-row">
+                <label for="final_grade">Final Grade (A-F):</label>
+                <select id="final_grade" name="final_grade">
+                    <option value="" disabled selected></option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="F">F</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label for="rating">Rating (1-5):</label>
+                <input type="number" id="rating" name="rating" min="1" max="5">
+            </div>
+            <div style="background-color: lightgray; padding: 1.2rem; border: 3px solid black; border-radius: 5px;">
+                <h3 style="padding-bottom: 15px;"><b>Comments:</b></h3>
+                <div style="padding-left: 40px;">
+                    {% for comment in course.comments %}
+                    <div class="comment">
+                        <textarea name="comment_{{ loop.index }}" rows="3">{{ comment }}</textarea>
+                    </div>
+                    {% endfor %}
+                    <div class="comment">
+                        <textarea name="new_comment" rows="3" placeholder="Add a new comment"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</body>
+
+</html>
+{% endblock %}
