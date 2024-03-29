@@ -5,7 +5,7 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Create Course</h1>
-        <form action="/add_course" method="POST" class="mt-4">
+        <form action="/create_course" method="POST" class="mt-4">
             <div class="row justify-content-md-center">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -15,10 +15,6 @@
                     <div style="padding-top: 1%" class="form-group">
                         <label for="instructor">Instructor:</label>
                         <input type="text" class="form-control" id="instructor" name="instructor">
-                    </div>
-                    <div style="padding-top: 1%" class="form-group">
-                        <label for="rating">Rating (1-5):</label>
-                        <input type="number" class="form-control" id="rating" name="rating" min="1" max="5">
                     </div>
                     <div style="padding-top: 2%" class="text-center">
                         <input type="submit" class="btn btn-primary" value="Submit">

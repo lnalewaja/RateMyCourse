@@ -66,6 +66,10 @@ def add_course():
     # add code here to add course to the database
     return redirect('/courses')
 
+@app.route('/create_course')
+def create_course():
+    return render_template('create_course.html')
+
 @app.get('/courses/<string:course_id>')
 def course_page(course_id):
     for course in courses:
