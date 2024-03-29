@@ -1,0 +1,39 @@
+/* style/style.css */
+
+#custom-feature-box.feature-box {
+    background-color: #7f8c8d; /* Gray color */
+    color: #ecf0f1; /* Light text for readability */
+    padding: 40px 50px; /* Padding inside the box */
+    margin: 40px auto 80px; /* Increased bottom margin to add space before the footer */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.15); /* Subtle shadow */
+    max-width: 60%; /* Smaller width for the box */
+    text-align: center; /* Center text alignment */
+}
+
+
+.feature-box h2 {
+    font-size: 2.5em; /* Adjust the heading size if needed */
+    margin-bottom: 0.5em; /* Space below the heading */
+    font-weight: bold; /* Bold font for heading */
+}
+
+.feature-box p {
+    font-size: 1.2em; /* Adjust the paragraph text size if needed */
+    margin-bottom: 1em; /* Space below the paragraph */
+}
+
+#custom-feature-box.feature-box a.custom-btn {
+    font-size: 1.2em; /* Adjust the button text size if needed */
+    padding: 10px 25px; /* Adjust the padding inside the button */
+    border-radius: 5px; /* Rounded corners for the button */
+    background-color: #3498db; /* Keep a bright color for the button */
+    color: white; /* Text color for the button */
+    text-transform: uppercase; /* Uppercase text for the button */
+    text-decoration: none; /* No underline on the text */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.feature-box a.btn:hover {
+    background-color: #2980b9; /* Darken the button when hovering */
+}
