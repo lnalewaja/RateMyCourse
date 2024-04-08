@@ -5,7 +5,6 @@
         <h1>Welcome to RateMyCourse!</h1>
         <p>This is the home page of our application.</p>
 
-        <!-- Search bar -->
 <form action="{{ url_for('load_courses') }}" method="GET">
     <div class="input-group mb-3">
         <input type="text" class="form-control" placeholder="Search for a course here" name="search_query">
@@ -14,16 +13,13 @@
 </form>
 
 
-        <!-- Feature Box like in the provided image -->
         <div id="custom-feature-box" class="feature-box text-white p-5 my-5">
             <h2>Explore Courses</h2>
             <p>The definitive guide to university courses from students for students.</p>
             <p>Find out what others have to say about your next course - before you enroll.</p>
-            <!-- Modified Browse Courses button with the link to the course page -->
             <a href="{{ url_for('load_courses') }}" class="custom-btn btn btn-lg">BROWSE COURSES</a>
         </div>
         
-        <!-- List of courses -->
         <ul>
             {% for course in courses %}
                 <li><a href="course_page.html">{{ course.course_name }}</a></li>

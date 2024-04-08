@@ -43,9 +43,11 @@ courses = [
 users = {
     'test_user': {
         'username': 'test_user',
-        'password_hash': generate_password_hash('test_password')
+        'password_hash': generate_password_hash('test_password'),
+        'email': 'test@example.com' 
     }
 }
+
 
 
 @app.get('/')
@@ -162,6 +164,33 @@ def login():
 
 @app.route('/logout')
 def logout():
-    #This is for after someone logs out it'll go back to showing Log in Sign up buttons
     session['username'] = ''  
     return redirect(url_for('index'))
+
+@app.get('/signup')
+def show_signup_form():
+    return render_template('signup.html')
+
+@app.post('/signup')
+def process_signup():
+    username = request.form.get('username')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    confirm_password = request.form.get('confirm_password')
+
+    if not all([username, email, password, confirm_password]):
+        return render_template('signup.html', error='Please fill out all fields.')
+    if password != confirm_password:
+        return render_template('signup.html', error='Passwords do not match.')
+
+    if username in users or any(user.get('email') == email for user in users.values()):
+        return render_template('signup.html', error='Username or email already exists.')
+
+    users[username] = {
+        'username': username,
+        'email': email,
+        'password_hash': generate_password_hash(password)
+    }
+
+    return redirect(url_for('login'))
+
