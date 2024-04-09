@@ -13,17 +13,27 @@ courses = [
         'rating': 3,  # test rating
         'grade': 'B',  # test grade
         'comments': [
-            'This course was hard.',
-            'It was so much work!',
-            'This course was hard.',
-            'It was so much work!',
-            'This course was hard.',
-            'It was so much work!',
-            'This course was hard.',
-            'It was so much work!',
-            'This course was hard.',
-            'It was so much work!',
-            'I thought it was not too bad.'
+            {
+                'user_id': '1',
+                'name': 'Landon Nalewaja',
+                'rating': '3',
+                'final_grade': 'B',
+                'comment': 'This course was hard.'
+            },
+            {
+                'user_id': '2',
+                'name': 'Ronni Elhadidy',
+                'rating': '4',
+                'final_grade': 'A',
+                'comment': 'It was so much work!'
+            },
+            {
+                'user_id': '3',
+                'name': 'Kendall Tart',
+                'rating': '2',
+                'final_grade': 'C',
+                'comment': 'I thought it was not too bad.'
+            }
         ]
     },
     {
@@ -34,9 +44,27 @@ courses = [
         'rating': 4,  # test rating
         'grade': 'A',  # test grade
         'comments': [
-            'This course was hard.',
-            'It was so much work!',
-            'I thought it was not too bad.'
+            {
+                'user_id': '1',
+                'name': 'Landon Nalewaja',
+                'rating': '3',
+                'final_grade': 'B',
+                'comment': 'This course was hard.'
+            },
+            {
+                'user_id': '2',
+                'name': 'Ronni Elhadidy',
+                'rating': '4',
+                'final_grade': 'A',
+                'comment': 'It was so much work!'
+            },
+            {
+                'user_id': '3',
+                'name': 'Kendall Tart',
+                'rating': '2',
+                'final_grade': 'C',
+                'comment': 'I thought it was not too bad.'
+            }
         ]
     }
 ]
@@ -88,6 +116,15 @@ def course_page(course_id):
         if course['course_id'] == course_id:
             return render_template('course_details.html', course=course)
     return 'Course not found', 404
+
+@app.post('/courses/<string:course_id>/addComment')
+def add_comment(course_id):
+    return redirect(f'/courses/{course_id}')
+
+@app.post('/courses/<string:course_id>/editComment')
+def edit_comment(course_id):
+    return redirect(f'/courses/{course_id}')
+
 
 @app.get('/courses/<string:course_id>/edit')
 def edit_course(course_id):
