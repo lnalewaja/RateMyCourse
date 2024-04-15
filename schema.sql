@@ -1,0 +1,3 @@
+CREATE DATABASE rate_my_course;
+
+CREATE TABLE ...
