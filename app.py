@@ -1,8 +1,15 @@
 from flask import Flask, redirect, render_template, url_for, session, request
 from werkzeug.security import check_password_hash, generate_password_hash
+from dotenv import load_dotenv
+
+from repositories import course_repo
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
+
+
 
 courses = [
     {
