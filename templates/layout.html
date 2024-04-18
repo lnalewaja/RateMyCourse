@@ -13,11 +13,42 @@
     <script src='main.js'></script>
     <style>
         .custom-navbar-color {
-            background-color: #deded5;
+            background-color:#193d5e;
+        }
+        .center-img {
+            display: flex; 
+            justify-content: center;
         }
         .navbar {
             z-index: 1000;
             position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .rounded-corners {
+            border-radius: 20px; /* Adjust this value to increase or decrease the roundness */
+            width: 200px; /* Optional: Set the width of the image */
+            height: auto; /* Optional: Adjust the height to maintain aspect ratio */
+        }
+        
+        .banner img {
+            width: 100%;
+            height: auto;
+            display: block; /* removes bottom space/gap */
+        }
+        
+        /* Optional: Adjusting height for smaller screens */
+        @media (max-width: 600px) {
+            .banner img {
+                height: 150px; /* Fixed height on small devices */
+                object-fit: cover; /* Ensures image covers the area without distortion */
+            }
         }
     </style>
 </head>
@@ -31,16 +62,16 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item" style="display: flex;">
-                        <a class="nav-link active" aria-current="page" href="/">Home</a>
-                        <a class="nav-link active" aria-current="page" href="{{ url_for('load_courses') }}">Courses</a>
+                        <a class="nav-link active" style="color:white" aria-current="page" href="/">Home</a>
+                        <a class="nav-link active" style="color:white" aria-current="page" href="{{ url_for('load_courses') }}">Courses</a>
                     </li>
                 </ul>
                 {% if not no_search_bar %}
-                <div style="padding-left: 8%" class="navbar d-flex justify-content-center">
+                <div style="padding-left: 8%" class="d-flex justify-content-center">
                     <form action="{{ url_for('load_courses') }}" method="GET" class="d-flex">
                         <input type="text" class="form-control" placeholder="Course Search"
                             name="search_query">
-                        <button class="btn btn-outline-primary" type="submit">Search</button>
+                        <button style="color:white" class="btn btn-outline" type="submit">Search</button>
                     </form>
                 </div>
                 {% endif %}
@@ -56,35 +87,35 @@
             </div>
         </div>
     </nav>
-    <div style="padding: 2.5%; padding-bottom: 100px; padding-top: 100px;">
+    <div style="padding: 2.5%; padding-bottom: 100px; padding-top: 100px; background-color:#A7C7FA" >
         {% block content %}
         {% endblock %}
     </div>
-    <footer style="background-color: #deded5; bottom: 0; width: 100%;">
+    <footer style="background-color:#193d5e; bottom: 0; width: 100%;">
         <div class="container p-4">
             <div class="row">
                 <div class="col-lg-6 col-md-12 mb-4">
-                    <h5 class="mb-3" style="letter-spacing: 2px; color: #818963;">footer content</h5>
-                    <p>
+                    <h5 class="mb-3" style="letter-spacing: 2px; color: white;">footer content</h5>
+                    <p style="color:white">
                         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste atque ea quis
                         molestias. Fugiat pariatur maxime quis culpa corporis vitae repudiandae aliquam
                         voluptatem veniam, est atque cumque eum delectus sint!
                     </p>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h5 class="mb-3" style="letter-spacing: 2px; color: #818963;">links</h5>
+                    <h5 class="mb-3" style="letter-spacing: 2px; color: white">links</h5>
                     <ul class="list-unstyled mb-0">
                         <li class="mb-1">
-                            <a href="#!" style="color: #4f4f4f;">Frequently Asked Questions</a>
+                            <a href="#!" style="color: white">Frequently Asked Questions</a>
                         </li>
                         <li class="mb-1">
-                            <a href="#!" style="color: #4f4f4f;">Course Search</a>
+                            <a href="#!" style="color: white">Course Search</a>
                         </li>
                         <li class="mb-1">
-                            <a href="#!" style="color: #4f4f4f;">Login</a>
+                            <a href="#!" style="color: white">Login</a>
                         </li>
                         <li>
-                            <a href="#!" style="color: #4f4f4f;">Sign Up</a>
+                            <a href="#!" style="color: white">Sign Up</a>
                         </li>
                     </ul>
                 </div>
@@ -95,7 +126,7 @@
                 </div>
             </div>
         </div>
-        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2); color:white">
             © 2024 Copyright: RateMyCourse
             <!--<a class="text-dark" href="https://mdbootstrap.com/">RateMyCourse</a> -->
         </div>
