@@ -145,32 +145,20 @@ def edit_course(course_id):
 @app.post('/courses/<string:course_id>/edit')
 def submit_edit_course(course_id):
     # Fetch the updated data from the form
-    new_rating = request.form.get('rating')
-    new_grade = request.form.get('final_grade')
-    new_comment = request.form.get('new_comment')
+    new_description = request.form.get('description')
+    new_course_number = request.form.get('course_number')
+    new_instructor = request.form.get('instructor')
 
-    # Convert rating to an integer if it's not empty
-    if new_rating:
-        new_rating = int(new_rating)
-
-
-
-    # Update the course data in the database (or your courses list)
+    # Update the course data in the courses list
     for course in courses:
         if course['course_id'] == course_id:
             # Update only the fields that have been provided in the form
-            if new_rating is not None:
-                course['rating'] = new_rating
-            if new_grade:
-                course['grade'] = new_grade
-            # Update existing comments
-            for i, comment in enumerate(course['comments']):
-                updated_comment = request.form.get(f'comment_{i+1}')  # Get updated comment from form
-                if updated_comment:
-                    course['comments'][i] = updated_comment
-            # Add new comment if provided
-            if new_comment:
-                course['comments'].append(new_comment)
+            if new_description:
+                course['description'] = new_description
+            if new_course_number:
+                course['course_id'] = new_course_number
+            if new_instructor:
+                course['teacher'] = new_instructor
             break
     else:
         return 'Course not found', 404
@@ -178,8 +166,9 @@ def submit_edit_course(course_id):
     # Redirect to the course detail page after editing
     return redirect(f'/courses/{course_id}')
 
-
-
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
 
 
 
