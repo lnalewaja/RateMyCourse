@@ -54,20 +54,20 @@
                     margin-top: 20px; 
                     font-size: 16px; 
                     padding: 10px 16px; 
-                    background-color: #6b715c; 
+                    background-color: #193d5e; 
                     color: white; 
                     border-radius: 30px; 
                     text-decoration: none; 
                 }
                 .create-course-bubble a:hover {
-                    background-color: #818963; 
+                    background-color: #337ec3; 
                 }
             </style>
 
             {% for course in courses %}
                 <div class="course-bubble">
                     <h3>{{ course.course_name }}</h3>
-                    <a href="/courses/{{ course.course_id }}" style="background-color: #6b715c; color: white; outline: none; border-radius: 20px; text-decoration: none; padding: 8px 16px;" onmouseover="this.style.backgroundColor='#8c947e'" onmouseout="this.style.backgroundColor='#6b715c'">View More</a>
+                    <a href="/courses/{{ course.course_id }}" style="background-color: #193d5e; color: white; outline: none; border-radius: 20px; text-decoration: none; padding: 8px 16px;" onmouseover="this.style.backgroundColor='#337ec3'" onmouseout="this.style.backgroundColor='#193d5e'">View More</a>
                 </div>
 
             {% endfor %}
