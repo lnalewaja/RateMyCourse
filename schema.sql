@@ -1,24 +1,29 @@
 CREATE DATABASE rate_my_course;
 
+-- Schema for Users
 CREATE TABLE Users (
-    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role VARCHAR(255)
 );
 
+-- Schema for Professors
 CREATE TABLE Professors (
-    professor_id INT PRIMARY KEY AUTO_INCREMENT,
+    professor_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
+    -- You can add more fields here if necessary (e.g., email, department, etc.)
 );
 
+-- Schema for Classes
 CREATE TABLE Classes (
-    course_number INT PRIMARY KEY AUTO_INCREMENT,
+    course_number SERIAL PRIMARY KEY,
     course_name VARCHAR(255) NOT NULL,
     course_description TEXT
 );
 
+-- Schema for the relationship between Classes and Professors
 CREATE TABLE ClassProfessors (
     class_id INT,
     professor_id INT,
@@ -27,8 +32,9 @@ CREATE TABLE ClassProfessors (
     FOREIGN KEY (professor_id) REFERENCES Professors(professor_id)
 );
 
+-- Schema for Comments
 CREATE TABLE Comments (
-    comment_id INT PRIMARY KEY AUTO_INCREMENT,
+    comment_id SERIAL PRIMARY KEY,
     user_id INT,
     course_number INT,
     rating DECIMAL(3, 2),
@@ -36,6 +42,7 @@ CREATE TABLE Comments (
     FOREIGN KEY (user_id) REFERENCES Users(user_id),
     FOREIGN KEY (course_number) REFERENCES Classes(course_number)
 );
+
 -- Inserting sample data into Users
 INSERT INTO Users (name, email, password, role) VALUES
 ('John Doe', 'john.doe@example.com', 'hashed_password1', 'student'),
