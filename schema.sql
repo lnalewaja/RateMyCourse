@@ -32,31 +32,23 @@ CREATE TABLE Reviews (
 
 
 -- Inserting sample data into Users
-INSERT INTO Users (name, email, password, role) VALUES
-('John Doe', 'john.doe@example.com', 'hashed_password1', 'student'),
-('Jane Smith', 'jane.smith@example.com', 'hashed_password2', 'student'),
-('Mike Brown', 'mike.brown@example.com', 'hashed_password3', 'student'),
-('Sarah Connor', 'sarah.connor@example.com', 'hashed_password4', 'professor');
+-- Assuming the function generate_password_hash exists in your SQL context, or replace this accordingly if executing outside.
+INSERT INTO Users (user_id, name, email, password) VALUES
+(1, 'Landon Nalewaja', 'landon@example.com', 'hashed_password_landon'), -- Replace 'hashed_password_landon' with an actual hash
+(2, 'Ronni Elhadidy', 'ronni@example.com', 'hashed_password_ronni'),   -- Replace 'hashed_password_ronni' with an actual hash
+(3, 'Kendall Tart', 'kendall@example.com', 'hashed_password_kendall'), -- Replace 'hashed_password_kendall' with an actual hash
+(4, 'Test User', 'test@example.com', 'hashed_password_test');          -- Replace 'hashed_password_test' with an actual hash
 
 -- Inserting sample data into Courses
-INSERT INTO Courses (course_code, course_name, course_description) VALUES
-('CS101', 'Introduction to Computer Science', 'This course introduces the fundamental concepts of computer science and computational thinking. It covers a broad range of foundational topics such as algorithms, data structures, software engineering, and databases.'),
-('MATH104', 'Calculus I', 'Calculus I covers differential and integral calculus in one variable, with applications involving functions of one variable.'),
-('HIST202', 'World History', 'This course offers a comprehensive overview of global history from the 18th century to the present, including major economic, social, and political developments.'),
-('BIO115', 'General Biology', 'An introduction to the fundamental principles of biology, focusing on the structure and function of the human body, genetics, evolution, and ecology.');
+INSERT INTO Courses (course_id, course_name, course_description, professor_name) VALUES
+('ITSC-3146', 'Intro to Operating Systems and Networking', 'Class Description', 'Harini Ramaprasad'),
+('ITSC-3155', 'Intro to Software Engineering', 'Class Description', 'Jacob Krevat');
 
 -- Inserting sample data into Reviews
-INSERT INTO Reviews (course_id, user_id, rating, comment) VALUES
-(1, 1, 4.5, 'Great introduction to computer science. Well-structured class and highly informative.'),
-(1, 2, 4.0, 'Informative class but very challenging for beginners who have no background in programming.'),
-(2, 1, 3.5, 'Solid course, though the pace was a bit fast. Good for students with some calculus background.'),
-(2, 3, 4.0, 'Helpful course with lots of resources. The professor was very clear with instructions.'),
-(3, 2, 5.0, 'Extremely insightful and wonderfully taught. Covers a lot of material but in an understandable way.'),
-(3, 4, 4.5, 'Loved this history course! It was thorough and the reading materials were excellent.'),
-(4, 3, 2.0, 'Not the best biology course. It seemed disorganized and the labs didn’t always work as planned.'),
-(4, 4, 3.0, 'Average course. Hopefully, it gets better with the new curriculum outline proposed for next year.');
-
--- Notes:
--- Be sure to replace 'hashed_passwordX' with actual hashed passwords if storing real user data.
--- The course_id and user_id values in the Reviews table are referring to the IDs generated when rows are inserted into the Users and Courses tables respectively.
--- Ensure that foreign key relations are properly maintained, meaning the user_ids and course_ids in the Reviews table should exist in the Users and Courses tables respectively.
+INSERT INTO Reviews (course_id, user_id, rating, comment, final_grade) VALUES
+('ITSC-3146', 1, 3, 'This course was hard.', 'B'),
+('ITSC-3146', 2, 4, 'It was so much work!', 'A'),
+('ITSC-3146', 3, 2, 'I thought it was not too bad.', 'C'),
+('ITSC-3155', 1, 3, 'This course was hard.', 'B'),
+('ITSC-3155', 2, 4, 'It was so much work!', 'A'),
+('ITSC-3155', 3, 2, 'I thought it was not too bad.', 'C');
