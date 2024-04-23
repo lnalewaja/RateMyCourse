@@ -119,17 +119,37 @@ def create_course():
 
 @app.get('/courses/<string:course_id>')
 def course_page(course_id):
-    for course in courses:
-        if course['course_id'] == course_id:
-            return render_template('course_details.html', course=course)
-    return 'Course not found', 404
+    course = course_repo.get_course_by_id(course_id)
+    course_comments = course_repo.get_all_comments_with_course_id(course_id)
+    
+    return render_template('course_details.html', course=course, course_comments=course_comments)
+
 
 @app.post('/courses/<string:course_id>/addComment')
 def add_comment(course_id):
+    user_id = 1 # need to change this value for fully functioning code when user sessions are created.
+    rating = request.form.get('rating')
+    final_grade = request.form.get('final_grade')
+    comment = request.form.get('comment')
+    result = course_repo.add_comment_to_course(course_id, user_id, rating, final_grade, comment)
     return redirect(f'/courses/{course_id}')
 
 @app.post('/courses/<string:course_id>/editComment')
 def edit_comment(course_id):
+    rating = request.form.get('rating')
+    final_grade = request.form.get('final_grade')
+    comment = request.form.get('comment')
+    review_id = request.form.get('review_id')
+    result = course_repo.edit_comment_from_course(course_id, review_id, rating, final_grade, comment)
+    return redirect(f'/courses/{course_id}')
+
+@app.post('/courses/<string:course_id>/deleteComment')
+def delete_comment(course_id):
+    review_id = request.form.get('review_id')
+    user_id = request.form.get('user_id')
+    print(review_id)
+    print(user_id)
+    result = course_repo.delete_comment_from_course(course_id, user_id, review_id)
     return redirect(f'/courses/{course_id}')
 
 
