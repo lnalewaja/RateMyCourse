@@ -38,7 +38,7 @@ def get_all_comments_with_course_id(course_id: str):
                     r.rating,
                     r.final_grade,
                     r.user_id,
-                    u.name
+                    u.username
                 FROM reviews r
                 JOIN courses c ON r.course_id = c.course_id
                 JOIN users u ON r.user_id = u.user_id
