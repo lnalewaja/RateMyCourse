@@ -1,8 +1,15 @@
 from flask import Flask, redirect, render_template, url_for, session, request
 from werkzeug.security import check_password_hash, generate_password_hash
+from dotenv import load_dotenv
+
+from repositories import course_repo
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
+
+
 
 courses = [
     {
@@ -10,18 +17,30 @@ courses = [
         'course_name': 'Intro to Operating Systems and Networking',
         'description': 'Class Description',
         'teacher': 'Harini Ramaprasad',
+        'rating': 3,  # test rating
+        'grade': 'B',  # test grade
         'comments': [
-            'This course was hard.',
-            'It was so much work!',
-            'This course was hard.',
-            'It was so much work!',
-            'This course was hard.',
-            'It was so much work!',
-            'This course was hard.',
-            'It was so much work!',
-            'This course was hard.',
-            'It was so much work!',
-            'I thought it was not too bad.'
+            {
+                'user_id': '1',
+                'name': 'Landon Nalewaja',
+                'rating': '3',
+                'final_grade': 'B',
+                'comment': 'This course was hard.'
+            },
+            {
+                'user_id': '2',
+                'name': 'Ronni Elhadidy',
+                'rating': '4',
+                'final_grade': 'A',
+                'comment': 'It was so much work!'
+            },
+            {
+                'user_id': '3',
+                'name': 'Kendall Tart',
+                'rating': '2',
+                'final_grade': 'C',
+                'comment': 'I thought it was not too bad.'
+            }
         ]
     },
     {
@@ -29,13 +48,41 @@ courses = [
         'course_name': 'Intro to Software Engineering',
         'description': 'Class Description',
         'teacher': 'Jacob Krevat',
+        'rating': 4,  # test rating
+        'grade': 'A',  # test grade
         'comments': [
-            'This course was hard.',
-            'It was so much work!',
-            'I thought it was not too bad.'
+            {
+                'user_id': '1',
+                'name': 'Landon Nalewaja',
+                'rating': '3',
+                'final_grade': 'B',
+                'comment': 'This course was hard.'
+            },
+            {
+                'user_id': '2',
+                'name': 'Ronni Elhadidy',
+                'rating': '4',
+                'final_grade': 'A',
+                'comment': 'It was so much work!'
+            },
+            {
+                'user_id': '3',
+                'name': 'Kendall Tart',
+                'rating': '2',
+                'final_grade': 'C',
+                'comment': 'I thought it was not too bad.'
+            }
         ]
     }
 ]
+users = {
+    'test_user': {
+        'username': 'test_user',
+        'password_hash': generate_password_hash('test_password'),
+        'email': 'test@example.com' 
+    }
+}
+
 
 
 @app.get('/')
@@ -77,25 +124,67 @@ def course_page(course_id):
             return render_template('course_details.html', course=course)
     return 'Course not found', 404
 
+@app.post('/courses/<string:course_id>/addComment')
+def add_comment(course_id):
+    return redirect(f'/courses/{course_id}')
+
+@app.post('/courses/<string:course_id>/editComment')
+def edit_comment(course_id):
+    return redirect(f'/courses/{course_id}')
+
+
 @app.get('/courses/<string:course_id>/edit')
-def edit_course():
-    # Loads the Edit Page.
-    # Make sure previous details are autofilled into the form.
-    return render_template('course_edit_page.html')
+def edit_course(course_id):
+    course = next((c for c in courses if c['course_id'] == course_id), None)
+    if course:
+        return render_template('course_edit_page.html', course=course)
+    else:
+        return "Course not found", 404
+
 
 @app.post('/courses/<string:course_id>/edit')
-def submit_edit_course():
-    # Makes post request to change the courses data on the database.
-    # Add code to pull the data from the html edit page and make changes to the course
-    return redirect('/courses/<int:course_id>')
+def submit_edit_course(course_id):
+    # Fetch the updated data from the form
+    new_rating = request.form.get('rating')
+    new_grade = request.form.get('final_grade')
+    new_comment = request.form.get('new_comment')
+
+    # Convert rating to an integer if it's not empty
+    if new_rating:
+        new_rating = int(new_rating)
 
 
-users = {
-    'test_user': {
-        'username': 'test_user',
-        'password_hash': generate_password_hash('test_password')
-    }
-}
+
+    # Update the course data in the database (or your courses list)
+    for course in courses:
+        if course['course_id'] == course_id:
+            # Update only the fields that have been provided in the form
+            if new_rating is not None:
+                course['rating'] = new_rating
+            if new_grade:
+                course['grade'] = new_grade
+            # Update existing comments
+            for i, comment in enumerate(course['comments']):
+                updated_comment = request.form.get(f'comment_{i+1}')  # Get updated comment from form
+                if updated_comment:
+                    course['comments'][i] = updated_comment
+            # Add new comment if provided
+            if new_comment:
+                course['comments'].append(new_comment)
+            break
+    else:
+        return 'Course not found', 404
+
+    # Redirect to the course detail page after editing
+    return redirect(f'/courses/{course_id}')
+
+
+
+
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -119,6 +208,33 @@ def login():
 
 @app.route('/logout')
 def logout():
-    #This is for after someone logs out it'll go back to showing Log in Sign up buttons
     session['username'] = ''  
     return redirect(url_for('index'))
+
+@app.get('/signup')
+def show_signup_form():
+    return render_template('signup.html')
+
+@app.post('/signup')
+def process_signup():
+    username = request.form.get('username')
+    email = request.form.get('email')
+    password = request.form.get('password')
+    confirm_password = request.form.get('confirm_password')
+
+    if not all([username, email, password, confirm_password]):
+        return render_template('signup.html', error='Please fill out all fields.')
+    if password != confirm_password:
+        return render_template('signup.html', error='Passwords do not match.')
+
+    if username in users or any(user.get('email') == email for user in users.values()):
+        return render_template('signup.html', error='Username or email already exists.')
+
+    users[username] = {
+        'username': username,
+        'email': email,
+        'password_hash': generate_password_hash(password)
+    }
+
+    return redirect(url_for('login'))
+

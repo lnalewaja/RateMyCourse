@@ -8,7 +8,7 @@
             <p><b>Instructor:</b> {{ course.teacher }}</p>
             <p style="margin-bottom: 5px;"><b>Course Actions:</b>
             <div style="display: flex; margin-bottom: 20px; gap: 6px;">
-                <form action="/course/{{ course.course_id }}/edit" method="get">
+                <form action="/courses/{{ course.course_id }}/edit" method="get">
                     <button>Edit</button>
                 </form>
                 <form action="/course/{{ course.course_id }}/delete" method="post">
@@ -20,10 +20,108 @@
         <p style="margin-bottom: 30px;">{{ course.description }}</p>
     </div>
     <div style="background-color: lightgray; padding: 1.2rem; border: 3px solid black; border-radius: 5px;">
-        <h3 style="padding-bottom: 15px;"><b>Comments:</b></h3>
-        <div style="padding-left: 40px;">
-            {% for comment in course.comments: %}
-                <p>{{ comment }}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; padding-bottom: 15px;"><b>Comments:</b></h3>
+            <button id="addCommentButton" style="margin: 0;">Add Comment +</button>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // addCommentButton
+                document.getElementById('addCommentButton').addEventListener('click', function() {
+                    document.getElementById('commentForm').classList.toggle('hidden');
+                });
+                // editCommentButton
+                document.querySelectorAll('.editCommentButton').forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const commentContainer = this.closest('.comment-container');
+                        commentContainer.querySelector('.commentEditForm').classList.toggle('hidden');
+                        commentContainer.querySelectorAll('.rating-grade-info').forEach(function(element) {
+                            element.classList.toggle('hidden');
+            });
+                    });
+                });
+            });
+        </script>
+        <div id="commentForm" class="hidden">
+            <form action="/courses/{{ course.course_id }}/addComment" method="post"></form>
+                <div style="display: flex; align-items: center; margin-bottom: 10px; gap: 30px;">
+                    <div style="display: flex; gap: 10px;">
+                        <p><b>Rating:</b></p>
+                        <select style="height: 32px;" name="rating" required>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <p><b>Final Grade:</b></p>
+                        <select style="height: 32px;" name="final_grade" required>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="F">F</option>
+                        </select>
+                    </div>
+                </div>
+                <textarea style="width: 100%; height: 100px;" name="comment" placeholder="Enter your comment"></textarea>
+                <button style="margin-bottom: 15px;" type="submit">Submit Comment</button>
+            </form>
+        </div>
+
+        <div>
+            {% for comment in course.comments %}
+                <div class="comment-container" style="background-color:white; border: 1px solid black; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 98%;">
+                        <div style="width: 95%;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p style="margin-bottom: 0px;"><b>{{ comment.name }}</b></p>
+                                <div style="display: flex; gap: 30px;" class="rating-grade-info">
+                                    <p style="margin-bottom: 0px;" class="rating-grade-info"><b>Rating:</b> {{ comment.rating }}</p>
+                                    <p style="margin-bottom: 0px;" class="rating-grade-info"><b>Final Grade:</b> {{ comment.final_grade }}</p>
+                                </div>
+                            </div>
+                            <p style="margin-bottom: 15px;" class="rating-grade-info">{{ comment.comment }}</p>
+
+                            <div class="commentEditForm hidden">
+                                <form action="/courses/{{course.course_id}}/editComment" method="post">
+                                    <div style="display: flex; align-items: center; margin-bottom: 10px; gap: 30px; margin-top: 10px;">
+                                        <div style="display: flex; gap: 10px; margin-bottom: 0px;">
+                                            <p><b>Rating:</b></p>
+                                            <select style="height: 32px;" name="rating" required>
+                                                <option {% if comment.rating == '1' %}selected{% endif %} value="1">1</option>
+                                                <option {% if comment.rating == '2' %}selected{% endif %} value="2">2</option>
+                                                <option {% if comment.rating == '3' %}selected{% endif %} value="3">3</option>
+                                                <option {% if comment.rating == '4' %}selected{% endif %} value="4">4</option>
+                                                <option {% if comment.rating == '5' %}selected{% endif %} value="5">5</option>
+                                            </select>
+                                        </div>
+                                        <div style="display: flex; gap: 10px;">
+                                            <p><b>Final Grade:</b></p>
+                                            <select style="height: 32px;" name="final_grade" required>
+                                                <option {% if comment.final_grade == 'A' %}selected{% endif %} value="A">A</option>
+                                                <option {% if comment.final_grade == 'B' %}selected{% endif %} value="B">B</option>
+                                                <option {% if comment.final_grade == 'C' %}selected{% endif %} value="C">C</option>
+                                                <option {% if comment.final_grade == 'D' %}selected{% endif %} value="D">D</option>
+                                                <option {% if comment.final_grade == 'F' %}selected{% endif %} value="F">F</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <textarea style="width: 100%;" name="comment">{{ comment.comment }}</textarea>
+                                    <button style="margin-bottom: 15px;" type="submit">Submit Comment</button>
+                                </form>
+                            </div>
+
+                        </div>
+                        
+                        <div>
+                            <button class="editCommentButton">Edit</button>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
         </div>
     </div>
