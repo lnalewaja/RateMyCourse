@@ -31,7 +31,7 @@ CREATE TABLE Reviews (
 
 
 -- Inserting sample data into Users
-INSERT INTO Users (name, email, password) VALUES
+INSERT INTO Users (username, email, password) VALUES
 ('Landon Nalewaja', 'landon@example.com', 'hashed_password1'),
 ('Ronni Elhadidy', 'ronni@example.com', 'hashed_password2'),
 ('Kendall Tart', 'kendall@example.com', 'hashed_password3'),

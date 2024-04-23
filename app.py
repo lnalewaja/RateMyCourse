@@ -147,8 +147,6 @@ def edit_comment(course_id):
 def delete_comment(course_id):
     review_id = request.form.get('review_id')
     user_id = request.form.get('user_id')
-    print(review_id)
-    print(user_id)
     result = course_repo.delete_comment_from_course(course_id, user_id, review_id)
     return redirect(f'/courses/{course_id}')
 
