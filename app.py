@@ -1,6 +1,8 @@
-from flask import Flask, redirect, render_template, url_for, session, request
+from flask import Flask, redirect, render_template, url_for, session, request,flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
+
+
 
 from repositories import course_repo
 
@@ -199,49 +201,49 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        user = users.get(username)
-
-        # Check if user exists and password is correct
-        if user and check_password_hash(user['password_hash'], password):
-            # If valid, we could log them in and store the user id in the session
-            session['username'] = user['username']
+        success, user_id, message = course_repo.login_user(username, password)
+        if success:
+            session['user_id'] = user_id
+            session['username'] = username  # Store username in session
             return redirect(url_for('index'))
         else:
-            # If user doesn't exist or password is wrong, reload the page with an error
-            return render_template('login.html', error="Invalid username or password")
-    
-    # For a GET request, just render the template
+            flash(message)
+            return redirect(url_for('login'))
+
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    session['username'] = ''  
+    session.pop('user_id', None)
+    session.pop('username', None)  # Clear the username from session
+    flash('You have been logged out.')
     return redirect(url_for('index'))
 
 @app.get('/signup')
 def show_signup_form():
     return render_template('signup.html')
 
-@app.post('/signup')
-def process_signup():
-    username = request.form.get('username')
-    email = request.form.get('email')
-    password = request.form.get('password')
-    confirm_password = request.form.get('confirm_password')
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
 
-    if not all([username, email, password, confirm_password]):
-        return render_template('signup.html', error='Please fill out all fields.')
-    if password != confirm_password:
-        return render_template('signup.html', error='Passwords do not match.')
+        if not all([username, email, password, confirm_password]):
+            flash('Please fill out all fields.')
+            return redirect(url_for('signup'))
+        if password != confirm_password:
+            flash('Passwords do not match.')
+            return redirect(url_for('signup'))
 
-    if username in users or any(user.get('email') == email for user in users.values()):
-        return render_template('signup.html', error='Username or email already exists.')
+        # Call to the signup_user function in course_repo
+        success, message = course_repo.signup_user(username, email, password)
+        flash(message)
+        if success:
+            return redirect(url_for('login'))
+        else:
+            return redirect(url_for('signup'))
 
-    users[username] = {
-        'username': username,
-        'email': email,
-        'password_hash': generate_password_hash(password)
-    }
-
-    return redirect(url_for('login'))
-
+    return render_template('signup.html')
