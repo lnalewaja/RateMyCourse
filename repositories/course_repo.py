@@ -1,5 +1,6 @@
 from repositories.db import get_pool
 from psycopg.rows import dict_row
+from werkzeug.security import generate_password_hash, check_password_hash
 
 def get_all_courses():
     pool = get_pool()
@@ -79,3 +80,36 @@ def delete_comment_from_course(course_id: str, user_id: str, review_id: str):
                 RETURNING *;
             ''', [course_id, user_id, review_id])
             return cur.fetchone()
+        
+
+
+def signup_user(username: str, email: str, password: str):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            # Check if the user already exists
+            cur.execute('SELECT user_id FROM Users WHERE username = %s OR email = %s', (username, email))
+            if cur.fetchone():
+                return False, 'Username or email already exists.'
+
+            # Insert the new user into the database
+            password_hash = generate_password_hash(password)
+            cur.execute('INSERT INTO Users (username, email, password) VALUES (%s, %s, %s)',
+                        (username, email, password_hash))
+            conn.commit()
+            return True, 'Registration successful, please login.'
+        
+
+def login_user(username: str, password: str):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            # Check if the user exists and fetch credentials
+            cur.execute('SELECT user_id, password FROM Users WHERE username = %s OR email = %s', (username, username))
+            user_record = cur.fetchone()
+            if user_record:
+                user_id, password_hash = user_record
+                # Verify the password
+                if check_password_hash(password_hash, password):
+                    return True, user_id, 'Login successful'
+            return False, None, 'Invalid username or password'
