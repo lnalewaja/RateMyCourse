@@ -2,6 +2,8 @@ from flask import Flask, redirect, render_template, url_for, session, request, j
 from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
 
+
+
 from repositories import course_repo
 
 load_dotenv()
@@ -167,17 +169,35 @@ def create_course():
 
 @app.get('/courses/<string:course_id>')
 def course_page(course_id):
-    for course in courses:
-        if course['course_id'] == course_id:
-            return render_template('course_details.html', course=course)
-    return 'Course not found', 404
+    course = course_repo.get_course_by_id(course_id)
+    course_comments = course_repo.get_all_comments_with_course_id(course_id)
+    
+    return render_template('course_details.html', course=course, course_comments=course_comments)
+
 
 @app.post('/courses/<string:course_id>/addComment')
 def add_comment(course_id):
+    user_id = 1 # need to change this value for fully functioning code when user sessions are created.
+    rating = request.form.get('rating')
+    final_grade = request.form.get('final_grade')
+    comment = request.form.get('comment')
+    result = course_repo.add_comment_to_course(course_id, user_id, rating, final_grade, comment)
     return redirect(f'/courses/{course_id}')
 
 @app.post('/courses/<string:course_id>/editComment')
 def edit_comment(course_id):
+    rating = request.form.get('rating')
+    final_grade = request.form.get('final_grade')
+    comment = request.form.get('comment')
+    review_id = request.form.get('review_id')
+    result = course_repo.edit_comment_from_course(course_id, review_id, rating, final_grade, comment)
+    return redirect(f'/courses/{course_id}')
+
+@app.post('/courses/<string:course_id>/deleteComment')
+def delete_comment(course_id):
+    review_id = request.form.get('review_id')
+    user_id = request.form.get('user_id')
+    result = course_repo.delete_comment_from_course(course_id, user_id, review_id)
     return redirect(f'/courses/{course_id}')
 
 
@@ -193,32 +213,20 @@ def edit_course(course_id):
 @app.post('/courses/<string:course_id>/edit')
 def submit_edit_course(course_id):
     # Fetch the updated data from the form
-    new_rating = request.form.get('rating')
-    new_grade = request.form.get('final_grade')
-    new_comment = request.form.get('new_comment')
+    new_description = request.form.get('description')
+    new_course_number = request.form.get('course_number')
+    new_instructor = request.form.get('instructor')
 
-    # Convert rating to an integer if it's not empty
-    if new_rating:
-        new_rating = int(new_rating)
-
-
-
-    # Update the course data in the database (or your courses list)
+    # Update the course data in the courses list
     for course in courses:
         if course['course_id'] == course_id:
             # Update only the fields that have been provided in the form
-            if new_rating is not None:
-                course['rating'] = new_rating
-            if new_grade:
-                course['grade'] = new_grade
-            # Update existing comments
-            for i, comment in enumerate(course['comments']):
-                updated_comment = request.form.get(f'comment_{i+1}')  # Get updated comment from form
-                if updated_comment:
-                    course['comments'][i] = updated_comment
-            # Add new comment if provided
-            if new_comment:
-                course['comments'].append(new_comment)
+            if new_description:
+                course['description'] = new_description
+            if new_course_number:
+                course['course_id'] = new_course_number
+            if new_instructor:
+                course['teacher'] = new_instructor
             break
     else:
         return 'Course not found', 404
@@ -226,8 +234,9 @@ def submit_edit_course(course_id):
     # Redirect to the course detail page after editing
     return redirect(f'/courses/{course_id}')
 
-
-
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
 
 
 
@@ -240,49 +249,49 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        user = users.get(username)
-
-        # Check if user exists and password is correct
-        if user and check_password_hash(user['password_hash'], password):
-            # If valid, we could log them in and store the user id in the session
-            session['username'] = user['username']
+        success, user_id, message = course_repo.login_user(username, password)
+        if success:
+            session['user_id'] = user_id
+            session['username'] = username  # Store username in session
             return redirect(url_for('index'))
         else:
-            # If user doesn't exist or password is wrong, reload the page with an error
-            return render_template('login.html', error="Invalid username or password")
-    
-    # For a GET request, just render the template
+            flash(message)
+            return redirect(url_for('login'))
+
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    session['username'] = ''  
+    session.pop('user_id', None)
+    session.pop('username', None)  # Clear the username from session
+    flash('You have been logged out.')
     return redirect(url_for('index'))
 
 @app.get('/signup')
 def show_signup_form():
     return render_template('signup.html')
 
-@app.post('/signup')
-def process_signup():
-    username = request.form.get('username')
-    email = request.form.get('email')
-    password = request.form.get('password')
-    confirm_password = request.form.get('confirm_password')
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
 
-    if not all([username, email, password, confirm_password]):
-        return render_template('signup.html', error='Please fill out all fields.')
-    if password != confirm_password:
-        return render_template('signup.html', error='Passwords do not match.')
+        if not all([username, email, password, confirm_password]):
+            flash('Please fill out all fields.')
+            return redirect(url_for('signup'))
+        if password != confirm_password:
+            flash('Passwords do not match.')
+            return redirect(url_for('signup'))
 
-    if username in users or any(user.get('email') == email for user in users.values()):
-        return render_template('signup.html', error='Username or email already exists.')
+        # Call to the signup_user function in course_repo
+        success, message = course_repo.signup_user(username, email, password)
+        flash(message)
+        if success:
+            return redirect(url_for('login'))
+        else:
+            return redirect(url_for('signup'))
 
-    users[username] = {
-        'username': username,
-        'email': email,
-        'password_hash': generate_password_hash(password)
-    }
-
-    return redirect(url_for('login'))
-
+    return render_template('signup.html')
