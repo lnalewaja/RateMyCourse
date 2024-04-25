@@ -11,20 +11,83 @@
                     <div class="form-group">
                         <label for="course_name">Course Name:</label>
                         <input type="text" class="form-control" id="course_name" name="course_name" required>
+                        <div id="course_dropdown" class="dropdown-menu"></div>
                     </div>
                     <div style="padding-top: 1%" class="form-group">
                         <label for="instructor">Instructor:</label>
                         <input type="text" class="form-control" id="instructor" name="instructor" required>
+                        <div id="course_drop" class="dropdown-menu"></div>
                     </div>
                     <div style="padding-top: 1%" class="form-group">
                         <label for="description">Description:</label>
                         <textarea class="form-control" id="description" rows="3" required></textarea>
                     </div>
                     <div style="padding-top: 2%" class="text-center">
-                        <input type="submit" class="btn btn-primary" value="Submit">
+                        <input type="submit" class="btn-custom" value="Submit">
                     </div>
                 </div>
             </div>
         </form>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#course_name').on('input', function() {
+            var courseName = $(this).val();
+            if (courseName.length > 0) {
+                $.ajax({
+                    url: '/get_courses',
+                    method: 'POST',
+                    data: { course_name: courseName },
+                    success: function(response) {
+                        var courses = response.courses;
+                        var dropdownHtml = '';
+                        for (var i = 0; i < courses.length; i++) {
+                            dropdownHtml += '<a class="dropdown-item" href="#">' + courses[i] + '</a>';
+                        }
+                        $('#course_dropdown').html(dropdownHtml).show();
+                    }
+                });
+            } else {
+                $('#course_dropdown').hide();
+            }
+        });
+
+        $(document).on('click', '.dropdown-item', function() {
+            var selectedCourse = $(this).text();
+            $('#course_name').val(selectedCourse);
+            $('#course_dropdown').hide();
+        });
+    });
+
+    $(document).ready(function() {
+        $('#instructor').on('input', function() {
+            var courseName = $(this).val();
+            if (courseName.length > 0) {
+                $.ajax({
+                    url: '/instructor',
+                    method: 'POST',
+                    data: { instructor: courseName },
+                    success: function(response) {
+                        var courses = response.courses;
+                        var dropdownHtml = '';
+                        for (var i = 0; i < courses.length; i++) {
+                            dropdownHtml += '<a class="dropdown-item" href="#">' + courses[i] + '</a>';
+                        }
+                        $('#course_drop').html(dropdownHtml).show();
+                    }
+                });
+            } else {
+                $('#course_drop').hide();
+            }
+        });
+
+        $(document).on('click', '.dropdown-item', function() {
+            var selectedCourse = $(this).text();
+            $('#instructor').val(selectedCourse);
+            $('#course_drop').hide();
+        });
+    });
+</script>
     {% endblock %}
