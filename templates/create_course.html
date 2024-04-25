@@ -44,7 +44,7 @@
                         var courses = response.courses;
                         var dropdownHtml = '';
                         for (var i = 0; i < courses.length; i++) {
-                            dropdownHtml += '<a class="dropdown-item" href="#">' + courses[i] + '</a>';
+                            dropdownHtml += '<a class="dropdown-item course-item" href="#">' + courses[i] + '</a>';
                         }
                         $('#course_dropdown').html(dropdownHtml).show();
                     }
@@ -53,27 +53,27 @@
                 $('#course_dropdown').hide();
             }
         });
-
-        $(document).on('click', '.dropdown-item', function() {
+    
+        $(document).on('click', '.course-item', function() {
             var selectedCourse = $(this).text();
             $('#course_name').val(selectedCourse);
             $('#course_dropdown').hide();
         });
     });
-
+    
     $(document).ready(function() {
         $('#instructor').on('input', function() {
-            var courseName = $(this).val();
-            if (courseName.length > 0) {
+            var instructorName = $(this).val();
+            if (instructorName.length > 0) {
                 $.ajax({
                     url: '/instructor',
                     method: 'POST',
-                    data: { instructor: courseName },
+                    data: { instructor: instructorName },
                     success: function(response) {
-                        var courses = response.courses;
+                        var instructors = response.instructors;
                         var dropdownHtml = '';
-                        for (var i = 0; i < courses.length; i++) {
-                            dropdownHtml += '<a class="dropdown-item" href="#">' + courses[i] + '</a>';
+                        for (var i = 0; i < instructors.length; i++) {
+                            dropdownHtml += '<a class="dropdown-item instructor-item" href="#">' + instructors[i] + '</a>';
                         }
                         $('#course_drop').html(dropdownHtml).show();
                     }
@@ -82,10 +82,10 @@
                 $('#course_drop').hide();
             }
         });
-
-        $(document).on('click', '.dropdown-item', function() {
-            var selectedCourse = $(this).text();
-            $('#instructor').val(selectedCourse);
+    
+        $(document).on('click', '.instructor-item', function() {
+            var selectedInstructor = $(this).text();
+            $('#instructor').val(selectedInstructor);
             $('#course_drop').hide();
         });
     });
