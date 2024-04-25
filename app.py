@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, url_for, session, request,flash
+from flask import Flask, redirect, render_template, url_for, session, request, jsonify, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
 
@@ -108,6 +108,54 @@ def load_courses():
 def add_page():
     # Loads the New Course Page - has for to add a new course.
     return render_template('new_course_page.html')
+
+@app.route('/get_courses', methods=['POST'])
+def get_courses():
+    course_name = request.form['course_name']
+    page = int(request.form.get('page', 1))
+    per_page = 8
+
+    courses = []
+    with open('listing.txt', 'r', encoding='utf-8') as file:
+        for line in file:
+            if course_name.lower() in line.lower():
+                courses.append(line.strip())
+
+    total_courses = len(courses)
+    start_index = (page - 1) * per_page
+    end_index = start_index + per_page
+    paginated_courses = courses[start_index:end_index]
+
+    return jsonify({
+        'courses': paginated_courses,
+        'total_courses': total_courses,
+        'current_page': page,
+        'total_pages': (total_courses + per_page - 1) // per_page
+    })
+    
+@app.route('/instructor', methods=['POST'])
+def instructor():
+    course_name = request.form['instructor']
+    page = int(request.form.get('page', 1))
+    per_page = 8
+
+    courses = []
+    with open('teachersunique.txt', 'r', encoding='utf-8') as file:
+        for line in file:
+            if course_name.lower() in line.lower():
+                courses.append(line.strip())
+
+    total_courses = len(courses)
+    start_index = (page - 1) * per_page
+    end_index = start_index + per_page
+    paginated_courses = courses[start_index:end_index]
+
+    return jsonify({
+        'courses': paginated_courses,
+        'total_courses': total_courses,
+        'current_page': page,
+        'total_pages': (total_courses + per_page - 1) // per_page
+    })
 
 @app.post('/courses/new')
 def add_course():
