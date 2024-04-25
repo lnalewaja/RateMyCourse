@@ -134,27 +134,27 @@ def get_courses():
     })
     
 @app.route('/instructor', methods=['POST'])
-def instructor():
-    course_name = request.form['instructor']
+def get_instructors():
+    instructor_name = request.form['instructor']
     page = int(request.form.get('page', 1))
     per_page = 8
 
-    courses = []
+    instructors = []
     with open('teachersunique.txt', 'r', encoding='utf-8') as file:
         for line in file:
-            if course_name.lower() in line.lower():
-                courses.append(line.strip())
+            if instructor_name.lower() in line.lower():
+                instructors.append(line.strip())
 
-    total_courses = len(courses)
+    total_instructors = len(instructors)
     start_index = (page - 1) * per_page
     end_index = start_index + per_page
-    paginated_courses = courses[start_index:end_index]
+    paginated_instructors = instructors[start_index:end_index]
 
     return jsonify({
-        'courses': paginated_courses,
-        'total_courses': total_courses,
+        'instructors': paginated_instructors,
+        'total_instructors': total_instructors,
         'current_page': page,
-        'total_pages': (total_courses + per_page - 1) // per_page
+        'total_pages': (total_instructors + per_page - 1) // per_page
     })
 
 @app.post('/courses/new')
