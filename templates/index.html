@@ -2,30 +2,30 @@
 
 {% block content %}
 
-    <div class="container">
-        <div style="padding-bottom:2%" class="banner">
-            <img src="static/images/wideratecourse.jpg" alt="Banner" class="rounded-corners">
-        </div>
-
-<form action="{{ url_for('load_courses') }}" method="GET">
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Search for a course here" name="search_query">
-        <button style="color:white" class="btn btn-outline-primary" type="submit">Search</button>
+<div class="container">
+    <div style="padding-bottom:2%" class="banner">
+        <img class="contImg" src="static/images/wideratecourse.jpg" alt="Banner" class="rounded-corners">
     </div>
-</form>
 
-
-        <div id="custom-feature-box" class="feature-box text-white p-5 my-5">
-            <h2>Explore Courses</h2>
-            <p>The definitive guide to university courses from students for students.</p>
-            <p>Find out what others have to say about your next course - before you enroll.</p>
-            <a href="{{ url_for('load_courses') }}" class="custom-btn btn btn-lg">BROWSE COURSES</a>
+    <form action="{{ url_for('load_courses') }}" method="GET">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search for a course here" name="search_query">
+            <button style="color:white" class="btn btn-outline-primary" type="submit">Search</button>
         </div>
-        
-        <ul>
-            {% for course in courses %}
-                <li><a href="course_page.html">{{ course.course_name }}</a></li>
-            {% endfor %}
-        </ul>
+    </form>
+
+
+    <div id="custom-feature-box" class="feature-box text-white p-5 my-5">
+        <h2>Explore Courses</h2>
+        <p>The definitive guide to university courses from students for students.</p>
+        <p>Find out what others have to say about your next course - before you enroll.</p>
+        <a href="{{ url_for('load_courses') }}" class="custom-btn btn btn-lg">BROWSE COURSES</a>
     </div>
+
+    <ul>
+        {% for course in courses %}
+        <li><a href="course_page.html">{{ course.course_name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

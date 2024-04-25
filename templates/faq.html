@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: aliceblue;
+        }
+
+        .faq {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #034170;
+            border-radius: 10px;
+            box-shadow: 1 1 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .answer {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .answer.active {
+            display: block;
+        }
+
+        .icon {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="faq">
+        <h1>Frequently Asked Questions</h1>
+        
+        <div class="question">
+            <span>Q: Lorem ipsum dolor sit amet consectetur adipisicing elit?</span>
+            <i class="fas fa-plus icon"></i>
+        </div>
+        <div class="answer">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum doloremque laborum velit commodi ipsa animi architecto pariatur ullam et, provident est id molestias adipisci maxime eligendi aliquid aspernatur corporis repellendus?</p>
+        </div>
+
+        <div class="question">
+            <span>Q: Lorem, ipsum dolor sit amet consectetur adipisicing elit?</span>
+            <i class="fas fa-plus icon"></i>
+        </div>
+        <div class="answer">
+            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Non, ullam, officiis reiciendis dolor, mollitia tempore nostrum iure animi rem quod impedit debitis dicta labore quisquam. Unde impedit animi fuga. Ullam?</p>
+        </div>
+
+        <div class="question">
+            <span>Q: Lorem ipsum dolor sit amet consectetur adipisicing elit?</span>
+            <i class="fas fa-plus icon"></i>
+        </div>
+        <div class="answer">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis nostrum tenetur obcaecati ipsa quidem architecto eum nihil tempore aliquam odit delectus consequuntur ullam, assumenda asperiores dolore fugiat aliquid ipsum error?</p>
+        </div>
+
+        <div class="question">
+            <span>Q: Lorem ipsum dolor sit amet consectetur adipisicing elit?</span>
+            <i class="fas fa-plus icon"></i>
+        </div>
+        <div class="answer">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor soluta esse earum, assumenda culpa ab provident minima quos id quasi consequuntur pariatur quam, ut harum minus voluptatem ea! Fuga, suscipit!</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questions = document.querySelectorAll('.question');
+            questions.forEach(question => {
+                question.addEventListener('click', function() {
+                    const answer = this.nextElementSibling;
+                    answer.classList.toggle('active');
+                    const icon = this.querySelector('.icon');
+                    if (icon) {
+                        icon.classList.toggle('fa-plus');
+                        icon.classList.toggle('fa-minus');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+{% endblock %}
+
