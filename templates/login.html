@@ -3,15 +3,25 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Login</h2>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }}" role="alert">
-            {{ message }}
-        </div>
-        {% endfor %}
-    {% endif %}
-    {% endwith %}
+    {% if message %}
+    <p id="fadeMessage" style="color:#751212">{{ message }}</p>
+    <script>
+        setTimeout(function() { // this will make the message fade out after 5 seconds
+            var fadeTarget = document.getElementById("fadeMessage");
+            var fadeEffect = setInterval(function () {
+                if (!fadeTarget.style.opacity) {
+                    fadeTarget.style.opacity = 1;
+                }
+                if (fadeTarget.style.opacity > 0) {
+                    fadeTarget.style.opacity -= 0.1;
+                } else {
+                    clearInterval(fadeEffect);
+                    fadeTarget.style.display = 'none';
+                }
+            }, 200);
+        }, 5000);
+    </script>
+{% endif %}
     <form action="{{ url_for('login') }}" method="post">
         <div class="mb-3">
             <label for="username" class="form-label">Username or Email</label>

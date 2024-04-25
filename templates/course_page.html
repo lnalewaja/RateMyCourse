@@ -64,9 +64,9 @@
                 }
             </style>
 
-            {% for course in courses %}
+            {% for course in allcourse %}
                 <div class="course-bubble">
-                    <h3>{{ course.course_name }}</h3>
+                    <h3><b>{{ course.course_name }}</b>: {{course.professor_name}}</h3>
                     <a href="/courses/{{ course.course_id }}" style="background-color: #193d5e; color: white; outline: none; border-radius: 20px; text-decoration: none; padding: 8px 16px;" onmouseover="this.style.backgroundColor='#337ec3'" onmouseout="this.style.backgroundColor='#193d5e'">View More</a>
                 </div>
 
