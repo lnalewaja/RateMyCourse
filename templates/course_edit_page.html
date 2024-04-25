@@ -46,46 +46,46 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
+
+
     </style>
 </head>
 
+
+
+
 <body>
-    <div class="form-container">
-        <h1>Edit Comment for {{ session['username'] }}</h1>
-        <form action="/courses/{{ course.course_id }}/edit" method="post">
-            <div class="form-row">
-                <label for="final_grade">Final Grade (A-F):</label>
-                <select id="final_grade" name="final_grade">
-                    <option value="" disabled selected></option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                    <option value="F">F</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <label for="rating">Rating (1-5):</label>
-                <input type="number" id="rating" name="rating" min="1" max="5">
-            </div>
-            <div style="background-color: lightgray; padding: 1.2rem; border: 3px solid black; border-radius: 5px;">
-                <h3 style="padding-bottom: 15px;"><b>Comments:</b></h3>
-                <div style="padding-left: 40px;">
-                    {% for comment in course.comments %}
-                    <div class="comment">
-                        <textarea name="comment_{{ loop.index }}" rows="3">{{ comment }}</textarea>
+    <div class="container">
+        <h1 style="text-align: center;">Edit Course</h1>
+        <form action="/courses/{{ course.course_id }}/edit" method="POST" class="mt-4">
+            <div class="row justify-content-md-center">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="course_name">Course Name:</label>
+                        <input type="text" class="form-control" id="course_name" name="course_name" value="{{ course.course_name }}">
                     </div>
-                    {% endfor %}
-                    <div class="comment">
-                        <textarea name="new_comment" rows="3" placeholder="Add a new comment"></textarea>
+                    <div class="form-group">
+                        <label for="course_id">Course Number:</label>
+                        <input type="text" class="form-control" id="course_id" name="course_id" value="{{ course.course_id }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="instructor">Instructor:</label>
+                        <input type="text" class="form-control" id="instructor" name="instructor" value="{{ course.teacher }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" id="description" name="description" rows="4">{{ course.description }}</textarea>
+                    </div>
+                    <div style="padding-top: 2%" class="text-center">
+                        <input type="submit" class="btn btn-primary" value="Save Changes">
                     </div>
                 </div>
             </div>
-            
-            <button type="submit">Save Changes</button>
         </form>
     </div>
+
 </body>
+
 
 </html>
 {% endblock %}

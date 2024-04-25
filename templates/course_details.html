@@ -5,7 +5,7 @@
         <h1 style="margin-bottom: 2rem;">{{ course.course_name }}</h1>
         <div style="display: flex; gap: 25px; margin-bottom: -1rem;">
             <p><b>Course Number:</b> {{ course.course_id }}</p>
-            <p><b>Instructor:</b> {{ course.teacher }}</p>
+            <p><b>Instructor:</b> {{ course.professor_name }}</p>
             <p style="margin-bottom: 5px;"><b>Course Actions:</b>
             <div style="display: flex; margin-bottom: 20px; gap: 6px;">
                 <form action="/courses/{{ course.course_id }}/edit" method="get">
@@ -15,9 +15,9 @@
                     <button>Delete</button>
                 </form>
             </div></p>
-        </div>
+        </div>  
         <p style="margin-bottom: 0rem;"><b>Description:</b></p>
-        <p style="margin-bottom: 30px;">{{ course.description }}</p>
+        <p style="margin-bottom: 30px;">{{ course.course_description }}</p>
     </div>
     <div style="background-color: lightgray; padding: 1.2rem; border: 3px solid black; border-radius: 5px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -44,7 +44,7 @@
             });
         </script>
         <div id="commentForm" class="hidden">
-            <form action="/courses/{{ course.course_id }}/addComment" method="post"></form>
+            <form action="/courses/{{ course.course_id }}/addComment" method="post">
                 <div style="display: flex; align-items: center; margin-bottom: 10px; gap: 30px;">
                     <div style="display: flex; gap: 10px;">
                         <p><b>Rating:</b></p>
@@ -73,12 +73,12 @@
         </div>
 
         <div>
-            {% for comment in course.comments %}
-                <div class="comment-container" style="background-color:white; border: 1px solid black; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+            {% for comment in course_comments %}
+                <div class="comment-container" style="background-color: #f0f0f0; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1); width: calc(100% - 40px); position: relative; text-align: left; ">
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 98%;">
                         <div style="width: 95%;">
                             <div style="display: flex; justify-content: space-between;">
-                                <p style="margin-bottom: 0px;"><b>{{ comment.name }}</b></p>
+                                <p style="margin-bottom: 0px;"><b>{{ comment.username }}</b></p>
                                 <div style="display: flex; gap: 30px;" class="rating-grade-info">
                                     <p style="margin-bottom: 0px;" class="rating-grade-info"><b>Rating:</b> {{ comment.rating }}</p>
                                     <p style="margin-bottom: 0px;" class="rating-grade-info"><b>Final Grade:</b> {{ comment.final_grade }}</p>
@@ -92,26 +92,32 @@
                                         <div style="display: flex; gap: 10px; margin-bottom: 0px;">
                                             <p><b>Rating:</b></p>
                                             <select style="height: 32px;" name="rating" required>
-                                                <option {% if comment.rating == '1' %}selected{% endif %} value="1">1</option>
-                                                <option {% if comment.rating == '2' %}selected{% endif %} value="2">2</option>
-                                                <option {% if comment.rating == '3' %}selected{% endif %} value="3">3</option>
-                                                <option {% if comment.rating == '4' %}selected{% endif %} value="4">4</option>
-                                                <option {% if comment.rating == '5' %}selected{% endif %} value="5">5</option>
+                                                <option {% if comment.rating == 1 %}selected{% endif %} value=1>1</option>
+                                                <option {% if comment.rating == 2 %}selected{% endif %} value=2>2</option>
+                                                <option {% if comment.rating == 3 %}selected{% endif %} value=3>3</option>
+                                                <option {% if comment.rating == 4 %}selected{% endif %} value=4>4</option>
+                                                <option {% if comment.rating == 5 %}selected{% endif %} value=5>5</option>
                                             </select>
                                         </div>
                                         <div style="display: flex; gap: 10px;">
                                             <p><b>Final Grade:</b></p>
                                             <select style="height: 32px;" name="final_grade" required>
-                                                <option {% if comment.final_grade == 'A' %}selected{% endif %} value="A">A</option>
-                                                <option {% if comment.final_grade == 'B' %}selected{% endif %} value="B">B</option>
-                                                <option {% if comment.final_grade == 'C' %}selected{% endif %} value="C">C</option>
-                                                <option {% if comment.final_grade == 'D' %}selected{% endif %} value="D">D</option>
-                                                <option {% if comment.final_grade == 'F' %}selected{% endif %} value="F">F</option>
+                                                <option {% if comment.final_grade == 'A' %}selected{% endif %} value='A'>A</option>
+                                                <option {% if comment.final_grade == 'B' %}selected{% endif %} value='B'>B</option>
+                                                <option {% if comment.final_grade == 'C' %}selected{% endif %} value='C'>C</option>
+                                                <option {% if comment.final_grade == 'D' %}selected{% endif %} value='D'>D</option>
+                                                <option {% if comment.final_grade == 'F' %}selected{% endif %} value='F'>F</option>
                                             </select>
                                         </div>
                                     </div>
                                     <textarea style="width: 100%;" name="comment">{{ comment.comment }}</textarea>
-                                    <button style="margin-bottom: 15px;" type="submit">Submit Comment</button>
+                                    <input type="hidden" name="review_id" value="{{comment.review_id}}">
+                                    <button style="margin-bottom: 15px; margin-top: 15px;" type="submit">Submit Comment</button>
+                                </form>
+                                <form action="/courses/{{course.course_id}}/deleteComment" method="post">
+                                    <input type="hidden" name="review_id" value="{{comment.review_id}}">
+                                    <input type="hidden" name="user_id" value="{{comment.user_id}}">
+                                    <button style="margin-bottom: 15px;" type="submit">Delete Comment </button>
                                 </form>
                             </div>
 
