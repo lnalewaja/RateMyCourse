@@ -1,0 +1,91 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Comment for {{ session['username'] }}</title>
+    <style>
+        /* Style to display form elements and headers */
+        body {
+            text-align: center;
+            /* Align the content in the center */
+        }
+
+        .form-container {
+            display: inline-block;
+            /* Center the form horizontally */
+            text-align: left;
+            /* Reset text alignment for form content */
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .form-row label {
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: larger;
+        }
+
+        .form-row textarea {
+            width: 100%;
+            resize: vertical;
+            /* Allow vertical resizing */
+        }
+
+        .comment {
+            padding: 5px;
+            border: 1px solid lightgray;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+
+    </style>
+</head>
+
+
+
+
+<body>
+    <div class="container">
+        <h1 style="text-align: center;">Edit Course</h1>
+        <form action="/courses/{{ course.course_id }}/edit" method="POST" class="mt-4">
+            <div class="row justify-content-md-center">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="course_name">Course Name:</label>
+                        <input type="text" class="form-control" id="course_name" name="course_name" value="{{ course.course_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="course_id">Course Number:</label>
+                        <input type="text" class="form-control" id="course_id" name="course_id" value="{{ course.course_id }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="instructor">Instructor:</label>
+                        <input type="text" class="form-control" id="instructor" name="instructor" value="{{ course.teacher }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" id="description" name="description" rows="4">{{ course.description }}</textarea>
+                    </div>
+                    <div style="padding-top: 2%" class="text-center">
+                        <input type="submit" class="btn btn-primary" value="Save Changes">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</body>
+
+
+</html>
+{% endblock %}

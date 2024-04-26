@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="container">
+        <h1 style="text-align: center;">Course List</h1>
+        <p style="text-align: center;">Embark on a personalized learning journey by exploring a vast array of courses tailored to your interests and goals, and unleash your potential with the click of a button.</p>
+        <br>
+
+        <!-- Feature Box like in the provided image -->
+        <div class="container">
+            <!-- Course boxes/bubbles -->
+            <style>
+                .course-bubble {
+                    background-color: #f0f0f0;
+                    border-radius: 20px;
+                    padding: 20px;
+                    margin-bottom: 20px;
+                    width: calc(100% - 40px);
+                    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+                    position: relative;
+                    text-align: left; 
+                }
+
+                .course-bubble h3 {
+                    margin-top: 0;
+                }
+
+                .course-bubble a {
+                    position: absolute;
+                    bottom: 20px;
+                    right: 20px;
+                    margin-top: 15px;
+                    font-size: 14px;
+                    padding: 8px 12px;
+                }
+
+                /* Style for the new bubble */
+                .create-course-bubble {
+                    background-color: #f0f0f0;
+                    border-radius: 30px; 
+                    padding: 30px;
+                    margin-bottom: 20px;
+                    width: fit-content; 
+                    box-shadow: 0px 2px 10px #6b715c;
+                    text-align: center; 
+                    display: inline-block; 
+                }
+                
+                .create-course-bubble h3 {
+                    margin-top: 0;
+                }
+                
+                .create-course-bubble a {
+                    margin-top: 20px; 
+                    font-size: 16px; 
+                    padding: 10px 16px; 
+                    background-color: #193d5e; 
+                    color: white; 
+                    border-radius: 30px; 
+                    text-decoration: none; 
+                }
+                .create-course-bubble a:hover {
+                    background-color: #337ec3; 
+                }
+            </style>
+
+            {% for course in allcourse %}
+                <div class="course-bubble">
+                    <h3><b>{{ course.course_name }}</b>: {{course.professor_name}}</h3>
+                    <a href="/courses/{{ course.course_id }}" style="background-color: #193d5e; color: white; outline: none; border-radius: 20px; text-decoration: none; padding: 8px 16px;" onmouseover="this.style.backgroundColor='#337ec3'" onmouseout="this.style.backgroundColor='#193d5e'">View More</a>
+                </div>
+
+            {% endfor %}
+
+            <!-- New container for creating a course bubble -->
+            <div class="center-container">
+                <br>
+                <br>
+                <div class="create-course-bubble">
+                    
+                    <h3>Don't see the course you're looking for?</h3>
+                    <br>
+                    <a href="/create_course">Add one here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+
+
+    <style>
+        .center-container {
+            text-align: center; 
+        }
+    </style>
+{% endblock %}
