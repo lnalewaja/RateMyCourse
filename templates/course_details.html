@@ -9,11 +9,9 @@
             <p style="margin-bottom: 5px;"><b>Course Actions:</b>
             <div style="display: flex; margin-bottom: 20px; gap: 6px;">
                 <form action="/courses/{{ course.course_id }}/edit" method="get">
-                    <button>Edit</button>
+                    <button class="btn btn-primary" style="background-color:rgb(42, 75, 85)">Edit</button>
                 </form>
-                <form action="/course/{{ course.course_id }}/delete" method="post">
-                    <button>Delete</button>
-                </form>
+
             </div></p>
         </div>  
         <p style="margin-bottom: 0rem;"><b>Description:</b></p>
@@ -22,7 +20,7 @@
     <div style="background-color: lightgray; padding: 1.2rem; border: 3px solid black; border-radius: 5px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h3 style="margin: 0; padding-bottom: 15px;"><b>Comments:</b></h3>
-            <button id="addCommentButton" style="margin: 0;">Add Comment +</button>
+            <button class="btn btn-primary" id="addCommentButton" style="margin: 0; background-color:rgb(42, 75, 85)">Add Comment +</button>
         </div>
 
         <script>
@@ -45,7 +43,7 @@
         </script>
         <div id="commentForm" class="hidden">
             <form action="/courses/{{ course.course_id }}/addComment" method="post">
-                <div style="display: flex; align-items: center; margin-bottom: 10px; gap: 30px;">
+                <div style="display: flex; align-items: center; margin-bottom: 10px; gap: 30px; ">
                     <div style="display: flex; gap: 10px;">
                         <p><b>Rating:</b></p>
                         <select style="height: 32px;" name="rating" required>
@@ -68,7 +66,7 @@
                     </div>
                 </div>
                 <textarea style="width: 100%; height: 100px;" name="comment" placeholder="Enter your comment"></textarea>
-                <button style="margin-bottom: 15px;" type="submit">Submit Comment</button>
+                <button  class="btn btn-primary" style="margin-bottom: 15px; background-color:green;"  type="submit">Submit Comment</button>
             </form>
         </div>
 
@@ -112,19 +110,19 @@
                                     </div>
                                     <textarea style="width: 100%;" name="comment">{{ comment.comment }}</textarea>
                                     <input type="hidden" name="review_id" value="{{comment.review_id}}">
-                                    <button style="margin-bottom: 15px; margin-top: 15px;" type="submit">Submit Comment</button>
+                                    <button class="btn btn-primary" style="margin-bottom: 15px; margin-top: 15px; background-color:green;" type="submit">Submit Comment</button>
                                 </form>
                                 <form action="/courses/{{course.course_id}}/deleteComment" method="post">
                                     <input type="hidden" name="review_id" value="{{comment.review_id}}">
                                     <input type="hidden" name="user_id" value="{{comment.user_id}}">
-                                    <button style="margin-bottom: 15px;" type="submit">Delete Comment </button>
+                                    <button class="btn btn-primary" style="margin-bottom: 15px; background-color:red" type="submit">Delete Comment </button>
                                 </form>
                             </div>
 
                         </div>
                         
-                        <div>
-                            <button class="editCommentButton">Edit</button>
+                        <div class="editCommentButton">
+                            <button class="btn btn-primary" style="background-color:rgb(42, 75, 85)">Edit</button>
                         </div>
                     </div>
                 </div>
