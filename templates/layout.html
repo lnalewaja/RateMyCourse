@@ -29,6 +29,13 @@
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
         }
 
+        .p {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            padding: 10px;
+        }
+
         body,
         html {
             margin: 0;
@@ -48,11 +55,13 @@
             height: auto;
             display: block;
         }
+
         .footer {
             clear: both;
             position: relative;
             height: 330px;
         }
+
         .btn-custom {
             background-color: #193d5e;
             color: #ffffff;
@@ -62,10 +71,34 @@
             cursor: pointer;
             border-radius: 20px;
         }
+
         .btn-custom:hover {
             background-color: #2d6498;
         }
 
+        #chat-sidebar {
+            height: 50vh;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 100%;
+            background-color: white;
+            opacity: 75%;
+            /* Adjusted for full width within its container */
+        }
+
+        #chat-form {
+            display: flex;
+            justify-content: center;
+            /* Center the form content */
+        }
+
+        #chat-form input[type="text"] {
+            width: 70%;
+            /* Adjusted width for text input */
+            margin-right: 10px;
+            /* Spacing between input and button */
+        }
     </style>
 </head>
 
@@ -81,6 +114,7 @@
                         <a class="nav-link active" style="color:white" aria-current="page" href="/">Home</a>
                         <a class="nav-link active" style="color:white" aria-current="page"
                             href="{{ url_for('load_courses') }}">Courses</a>
+                        <a class="nav-link active" style="color:white" aria-current="page" href="/gpt">AI Chat</a>
                     </li>
                 </ul>
                 {% if not no_search_bar %}
@@ -113,7 +147,10 @@
                 <div class="col-lg-6 col-md-12 mb-4">
                     <h5 class="mb-3" style="letter-spacing: 2px; color: white;">Welcome Statement</h5>
                     <p style="color:white">
-                        RateMyCourse is your go-to platform for honest reviews and ratings on university courses. Empowering students to make informed decisions, our site features real feedback from peers who've been in your shoes. Explore, rate, and choose your next course with confidence. Join our community and navigate your academic journey with ease!
+                        RateMyCourse is your go-to platform for honest reviews and ratings on university courses.
+                        Empowering students to make informed decisions, our site features real feedback from peers
+                        who've been in your shoes. Explore, rate, and choose your next course with confidence. Join our
+                        community and navigate your academic journey with ease!
                     </p>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4">
