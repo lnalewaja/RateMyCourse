@@ -1,12 +1,22 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<div class="center-img">
+    <h1 style="padding-bottom:5%"><b>Login</b></h1>
+</div>
+<div class="center-img">
+    <form action="/Ologin">
+        <button type="submit" class="google-sign-in-button">
+            Sign in with Google
+        </button>
+    </form>
+</div>
 <div class="container mt-5">
-    <h2>Login</h2>
+    <h2 class="fancy" style="--w: 50vw;--c: #193d5e;--b:4px;--g: 40px; color:#193d5e">Or</h2>
     {% if message %}
     <p id="fadeMessage" style="color:#751212">{{ message }}</p>
     <script>
-        setTimeout(function() { // this will make the message fade out after 5 seconds
+        setTimeout(function () { // this will make the message fade out after 5 seconds
             var fadeTarget = document.getElementById("fadeMessage");
             var fadeEffect = setInterval(function () {
                 if (!fadeTarget.style.opacity) {
@@ -21,7 +31,7 @@
             }, 200);
         }, 5000);
     </script>
-{% endif %}
+    {% endif %}
     <form action="{{ url_for('login') }}" method="post">
         <div class="mb-3">
             <label for="username" class="form-label">Username or Email</label>

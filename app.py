@@ -3,6 +3,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
 import openai
 import os
+from authlib.integrations.flask_client import OAuth
 
 openai.api_key = os.environ.get('api_key')
 
@@ -13,7 +14,20 @@ from repositories import course_repo
 load_dotenv()
 
 app = Flask(__name__)
+oauth = OAuth(app)
 app.secret_key = 'super_secret_key'
+google = oauth.register(
+    name='google',
+    client_id=os.environ.get('client_id'),
+    client_secret=os.environ.get('secret_key'),
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    client_kwargs={'scope': 'openid profile email'},
+    jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
+)
 
 
 
@@ -93,8 +107,10 @@ users = {
 
 @app.get('/')
 def index():
+    email = dict(session).get('email', None)
+    name = dict(session).get('name', None)
     # Loads the Home Page.
-    return render_template('index.html', no_search_bar=True)
+    return render_template('index.html', no_search_bar=True, username=email)
 
 @app.get('/course_page')
 def load_courses():
@@ -328,10 +344,45 @@ def login():
 
     return render_template('login.html', message=message)
 
+@app.route('/Ologin', methods=['GET', 'POST'])
+def Ologin():
+    google = oauth.create_client('google')
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@app.route('/authorize')
+def authorize():
+    google = oauth.create_client('google')
+    token = google.authorize_access_token()
+    resp = google.get('userinfo')
+    user_info = resp.json()
+    email = user_info['email']
+    name = user_info['name']
+    
+    session['email'] = email
+    session['name'] = name
+    
+    #if isverified(email) == True:
+    #    # add to user table an isverified option and set to true
+    #else:
+    #    # else set isverified to false
+    #    return redirect('/')
+    
+    return redirect('/')
+
+
+#def isverified(email):
+#    if email.endswith("@uncc.edu") or email.endswith("@charlotte.edu"):
+#        verified = True
+#    else:
+#        verified = False
+#    return verified
+
+
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
-    session.pop('username', None)  # Clear the username from session
+    for key in list(session.keys()):
+        session.pop(key)
     flash('You have been logged out.')
     return redirect(url_for('index'))
 
