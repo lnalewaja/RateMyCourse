@@ -114,14 +114,14 @@ def index():
 
 @app.get('/course_page')
 def load_courses():
+    allcourse = course_repo.get_all_courses()
     search_query = request.args.get('search_query', '')  # Get the search query from the request
     if search_query:
         # Filter courses based on the search query
-        filtered_courses = [course for course in courses if search_query.lower() in course['course_name'].lower()]
-        return render_template('course_page.html', courses=filtered_courses, search_query=search_query)
+        searchlower = search_query.lower()
+        filtered_courses = course_repo.get_courses_by_name(searchlower)
+        return render_template('course_page.html', allcourse=filtered_courses, search_query=search_query)
     else:
-        allcourse = course_repo.get_all_courses()
-        print(allcourse)
         return render_template('course_page.html', allcourse=allcourse)
 
 
