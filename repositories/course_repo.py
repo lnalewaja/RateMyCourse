@@ -112,34 +112,42 @@ def delete_comment_from_course(course_id: str, user_id: str, review_id: str):
         
 
 
-def signup_user(username: str, email: str, password: str):
+def signup_user(username: str, email: str, password: str, is_oauth: bool = False):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor() as cur:
             # Check if the user already exists
-            cur.execute('SELECT user_id FROM Users WHERE username = %s OR email = %s', (username, email))
+            cur.execute('SELECT user_id FROM Users WHERE email = %s', (email,))
             if cur.fetchone():
                 return False, 'Username or email already exists.'
 
             # Insert the new user into the database
-            password_hash = generate_password_hash(password)
-            cur.execute('INSERT INTO Users (username, email, password) VALUES (%s, %s, %s)',
-                        (username, email, password_hash))
+            if is_oauth:
+                # For OAuth users, store a placeholder password
+                password_hash = generate_password_hash("oauth_user")
+            else:
+                password_hash = generate_password_hash(password)
+
+            cur.execute('INSERT INTO Users (username, email, password, is_oauth) VALUES (%s, %s, %s, %s)',
+                        (username, email, password_hash, is_oauth))
             conn.commit()
             return True, 'Registration successful, please login.'
         
 
-def login_user(username: str, password: str):
+def login_user(username: str, password: str, is_oauth: bool = False):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor() as cur:
             # Check if the user exists and fetch credentials
-            cur.execute('SELECT user_id, password FROM Users WHERE username = %s OR email = %s', (username, username))
+            cur.execute('SELECT user_id, password, is_oauth FROM Users WHERE username = %s OR email = %s', (username, username))
             user_record = cur.fetchone()
             if user_record:
-                user_id, password_hash = user_record
+                user_id, password_hash, user_is_oauth = user_record
                 # Verify the password
-                if check_password_hash(password_hash, password):
+                if is_oauth and user_is_oauth:
+                    # For OAuth users, skip password verification
+                    return True, user_id, 'Login successful'
+                elif not is_oauth and check_password_hash(password_hash, password):
                     return True, user_id, 'Login successful'
             return False, None, 'Invalid username or password'
         

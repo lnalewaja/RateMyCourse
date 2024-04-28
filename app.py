@@ -193,19 +193,20 @@ def create_course():
 @app.get('/courses/<string:course_id>')
 def course_page(course_id):
     email = dict(session).get('email', None)
+    google_id = dict(session).get('id', None)
     name = dict(session).get('name', None)
     if email in admin:
         course = course_repo.get_course_by_id(course_id)
         course_comments = course_repo.get_all_comments_with_course_id(course_id)
-        return render_template('course_details.html', course=course, course_comments=course_comments, showactions=True)
+        return render_template('course_details.html', course=course, course_comments=course_comments, google_id=google_id, showactions=True)
     if email != None:
         course = course_repo.get_course_by_id(course_id)
         course_comments = course_repo.get_all_comments_with_course_id(course_id)
-        return render_template('course_details.html', course=course, course_comments=course_comments, showactions=False)
+        return render_template('course_details.html', course=course, course_comments=course_comments, google_id=google_id, showactions=False)
     else:
         course = course_repo.get_course_by_id(course_id)
         course_comments = course_repo.get_all_comments_with_course_id(course_id)
-        return render_template('course_details.html', course=course, course_comments=course_comments, showactions=False)
+        return render_template('course_details.html', course=course, course_comments=course_comments, google_id=google_id, showactions=False)
     
     return render_template('course_details.html', course=course, course_comments=course_comments)
 
@@ -309,19 +310,28 @@ def authorize():
     resp = google.get('userinfo')
     user_info = resp.json()
     email = user_info['email']
+    userid = user_info['id']
     username = user_info['name']
-    
+    googlepass = "Oauth"
+
     session['email'] = email
     session['name'] = username
-    
-    if isverified(email) == True:
-        # add to user table an isverified option and set to true
-        session['verified'] = True
-        return redirect('/')
+    user = course_repo.signup_user(username, email, googlepass, is_oauth=True)
+
+    if user:
+        success, user_id, logged_in_user = course_repo.login_user(email, googlepass, is_oauth=True)
+        print(logged_in_user)
+        print(user_id)
+        if logged_in_user:
+            session['user_id'] = user_id
+            if isverified(email) == True:
+                session['verified'] = True
+        else:
+            session['user_id'] = None
     else:
-        # else set isverified to false
-        session['verified'] = False
-        return redirect('/')
+        session['user_id'] = None
+
+    return redirect('/')
     
     return redirect('/')
 
