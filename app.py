@@ -1,6 +1,11 @@
 from flask import Flask, redirect, render_template, url_for, session, request, jsonify, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from dotenv import load_dotenv
+import openai
+import os
+from authlib.integrations.flask_client import OAuth
+
+openai.api_key = os.environ.get('api_key')
 
 
 
@@ -9,7 +14,20 @@ from repositories import course_repo
 load_dotenv()
 
 app = Flask(__name__)
+oauth = OAuth(app)
 app.secret_key = 'super_secret_key'
+google = oauth.register(
+    name='google',
+    client_id=os.environ.get('client_id'),
+    client_secret=os.environ.get('secret_key'),
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    client_kwargs={'scope': 'openid profile email'},
+    jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
+)
 
 
 
@@ -89,25 +107,23 @@ users = {
 
 @app.get('/')
 def index():
+    email = dict(session).get('email', None)
+    name = dict(session).get('name', None)
     # Loads the Home Page.
-    return render_template('index.html', no_search_bar=True)
+    return render_template('index.html', no_search_bar=True, username=email)
 
 @app.get('/course_page')
 def load_courses():
+    allcourse = course_repo.get_all_courses()
     search_query = request.args.get('search_query', '')  # Get the search query from the request
     if search_query:
         # Filter courses based on the search query
-        filtered_courses = [course for course in courses if search_query.lower() in course['course_name'].lower()]
-        return render_template('course_page.html', courses=filtered_courses, search_query=search_query)
+        searchlower = search_query.lower()
+        filtered_courses = course_repo.get_courses_by_name(searchlower)
+        return render_template('course_page.html', allcourse=filtered_courses, search_query=search_query)
     else:
-        return render_template('course_page.html', courses=courses)
+        return render_template('course_page.html', allcourse=allcourse)
 
-
-
-@app.get('/courses/new')
-def add_page():
-    # Loads the New Course Page - has for to add a new course.
-    return render_template('new_course_page.html')
 
 @app.route('/get_courses', methods=['POST'])
 def get_courses():
@@ -156,12 +172,80 @@ def get_instructors():
         'current_page': page,
         'total_pages': (total_instructors + per_page - 1) // per_page
     })
+    
+def chat_with_gpt(prompt):
+    courses = course_repo.get_all_courses()
+
+    # Format each course dictionary as a string
+    course_strings = []
+    for course in courses:
+        course_str = f"Course ID: {course['course_id']}\nTitle: {course['course_name']}\nDescription: {course['course_description']}\n"
+        course_strings.append(course_str)
+
+    # Join the course strings into a single string
+    courses_str = "\n".join(course_strings)
+
+    # Check if the user is asking about a specific course
+    if prompt.lower().startswith("reviews:"):
+        course_id = prompt.split(":")[1].strip()
+        comments = course_repo.get_all_comments_with_course_id(course_id)
+
+        # Format each comment as a string
+        comment_strings = []
+        for comment in comments:
+            comment_str = f"Comment ID: {comment['review_id']}\nUser: {comment['user_id']}\nComment: {comment['comment']}\n"
+            comment_strings.append(comment_str)
+
+        # Join the comment strings into a single string
+        comments_str = "\n".join(comment_strings)
+
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are an AI assistant that provides helpful responses based on the given course information and comments when asked."},
+                {"role": "system", "content": "Here are the comments for the requested course:\n" + comments_str},
+                {"role": "user", "content": prompt}
+            ]
+        )
+    else:
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are an AI assistant that provides helpful responses based on the given course information when asked."},
+                {"role": "system", "content": "Here are all the available courses:\n" + courses_str},
+                {"role": "user", "content": prompt}
+            ]
+        )
+    return response.choices[0].message.content.strip()
+
+@app.route("/gpt")
+def home():
+    return render_template("chat.html")
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.json  # Access the JSON data sent by the client
+    user_input = data.get("message", "")  # Get the message from the JSON data
+    print(f"Received user input: {user_input}")
+    response = chat_with_gpt(user_input)
+    return jsonify({"response": response})
+    
 
 @app.post('/courses/new')
 def add_course():
+    name = request.form['course_name']
+    course = request.form['instructor']
+    description = request.form['description']
+    course_id = request.form['course_num']
+    if course_repo.get_course_by_id(course_id):
+        flash("Class already exists!")
+        return redirect(url_for('course_page', course_id=course_id))
+    else:
+        course_repo.add_course(course_id ,name, course, description)
+        return redirect(url_for('course_page', course_id=course_id))
     # Makes post request to create new course.
     # add code here to add course to the database
-    return redirect('/courses')
+    return render_template('course_page.html')
 
 @app.route('/create_course')
 def create_course():
@@ -236,6 +320,7 @@ if __name__ == '__main__':
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    message = request.args.get('message', '')
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -246,15 +331,49 @@ def login():
             session['username'] = username  # Store username in session
             return redirect(url_for('index'))
         else:
-            flash(message)
-            return redirect(url_for('login'))
+            return redirect(url_for('login', submitted=True, message="Incorrect Password or Email"))
 
-    return render_template('login.html')
+    return render_template('login.html', message=message)
+
+@app.route('/Ologin', methods=['GET', 'POST'])
+def Ologin():
+    google = oauth.create_client('google')
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@app.route('/authorize')
+def authorize():
+    google = oauth.create_client('google')
+    token = google.authorize_access_token()
+    resp = google.get('userinfo')
+    user_info = resp.json()
+    email = user_info['email']
+    name = user_info['name']
+    
+    session['email'] = email
+    session['name'] = name
+    
+    #if isverified(email) == True:
+    #    # add to user table an isverified option and set to true
+    #else:
+    #    # else set isverified to false
+    #    return redirect('/')
+    
+    return redirect('/')
+
+
+#def isverified(email):
+#    if email.endswith("@uncc.edu") or email.endswith("@charlotte.edu"):
+#        verified = True
+#    else:
+#        verified = False
+#    return verified
+
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
-    session.pop('username', None)  # Clear the username from session
+    for key in list(session.keys()):
+        session.pop(key)
     flash('You have been logged out.')
     return redirect(url_for('index'))
 

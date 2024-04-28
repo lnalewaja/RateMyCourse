@@ -1,0 +1,51 @@
+{%extends "layout.html" %}
+{% block content %}
+<div class="container st-1">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div id="chat-sidebar" class="mb-3"></div>
+            <form id="chat-form" class="form-inline">
+                <input type="text" id="message" class="form-control" placeholder="Type your message..."
+                    autocomplete="off">
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+        </div>
+        <div style="padding-top:3%" class="center-img container-xl">
+            <div>
+                <p><b>To get Course Reviews from our AI:</b><br> Ask the AI for the list of courses, then locate the ID of the course and type <b>reviews: ID_here</b> in the search box<br><b>(ex.)reviews: ITSC-3155</b></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display: flex; justify-content: center; align-items: center;">
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.getElementById("chat-form").onsubmit = async function (e) {
+        e.preventDefault();
+        const messageElement = document.getElementById("message");
+        const message = messageElement.value;
+
+        const payload = JSON.stringify({
+            message: message
+        });
+
+        const response = await fetch("/chat", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: payload,
+        });
+
+        const data = await response.json();
+        const chatSidebar = document.getElementById("chat-sidebar");
+        chatSidebar.innerHTML += `<div class="p-2 border-bottom">You: ${message}</div><div class="p-2 border-bottom">AI: ${data.response}</div>`;
+        messageElement.value = "";
+        chatSidebar.scrollTop = chatSidebar.scrollHeight;
+    };
+</script>
+
+{% endblock %}
