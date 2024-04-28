@@ -114,6 +114,7 @@ def index():
 
 @app.get('/course_page')
 def load_courses():
+    pmessage = request.args.get('pmessage', '')
     allcourse = course_repo.get_all_courses()
     search_query = request.args.get('search_query', '')  # Get the search query from the request
     if search_query:
@@ -122,7 +123,7 @@ def load_courses():
         filtered_courses = course_repo.get_courses_by_name(searchlower)
         return render_template('course_page.html', allcourse=filtered_courses, search_query=search_query)
     else:
-        return render_template('course_page.html', allcourse=allcourse)
+        return render_template('course_page.html', allcourse=allcourse, pmessage=pmessage)
 
 
 @app.route('/get_courses', methods=['POST'])
@@ -237,9 +238,12 @@ def add_course():
     course = request.form['instructor']
     description = request.form['description']
     course_id = request.form['course_num']
-    if course_repo.get_course_by_id(course_id):
+    namelower = name.lower()
+    if course_repo.get_courses_by_name(namelower):
         flash("Class already exists!")
-        return redirect(url_for('course_page', course_id=course_id))
+        id = course_repo.get_courses_by_name(namelower)
+        existing = id['course_id']
+        return redirect(url_for('course_page', course_id=existing))
     else:
         course_repo.add_course(course_id ,name, course, description)
         return redirect(url_for('course_page', course_id=course_id))
@@ -249,7 +253,14 @@ def add_course():
 
 @app.route('/create_course')
 def create_course():
-    return render_template('create_course.html')
+    pmessage="You do not have the required permissions to add a new course!"
+    email = dict(session).get('email', None)
+    if email != None:
+        if email.endswith("@uncc.edu") or email.endswith("@charlotte.edu"):
+            return render_template('create_course.html')
+        else:
+            return redirect(url_for('load_courses', pmessage=pmessage))
+    return redirect(url_for('load_courses', pmessage=pmessage))
 
 @app.get('/courses/<string:course_id>')
 def course_page(course_id):
@@ -353,21 +364,24 @@ def authorize():
     session['email'] = email
     session['name'] = name
     
-    #if isverified(email) == True:
-    #    # add to user table an isverified option and set to true
-    #else:
-    #    # else set isverified to false
-    #    return redirect('/')
+    if isverified(email) == True:
+        # add to user table an isverified option and set to true
+        session['verified'] = True
+        return redirect('/')
+    else:
+        # else set isverified to false
+        session['verified'] = False
+        return redirect('/')
     
     return redirect('/')
 
 
-#def isverified(email):
-#    if email.endswith("@uncc.edu") or email.endswith("@charlotte.edu"):
-#        verified = True
-#    else:
-#        verified = False
-#    return verified
+def isverified(email):
+    if email.endswith("@uncc.edu") or email.endswith("@charlotte.edu"):
+        verified = True
+    else:
+        verified = False
+    return verified
 
 
 @app.route('/logout')
