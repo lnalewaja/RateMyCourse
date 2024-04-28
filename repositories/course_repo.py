@@ -12,6 +12,13 @@ def get_all_courses():
                 FROM courses;
             ''')
             return cur.fetchall()
+        
+def get_courses_by_name(name):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(''' SELECT * FROM courses WHERE LOWER(course_name) LIKE LOWER(%s); ''', [f"%{name}%"])
+            return cur.fetchall()
 
 def get_course_by_id(course_id: str):
     pool = get_pool()
@@ -113,3 +120,14 @@ def login_user(username: str, password: str):
                 if check_password_hash(password_hash, password):
                     return True, user_id, 'Login successful'
             return False, None, 'Invalid username or password'
+        
+def add_course(id: str, course_name: str, instructor: str, description: str):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                INSERT INTO Courses (course_id, course_name, course_description, professor_name)
+                VALUES (%s, %s, %s, %s)
+                RETURNING *;
+            ''', [id, course_name, description, instructor])
+            return cur.fetchone()
