@@ -30,78 +30,7 @@ google = oauth.register(
 )
 
 
-
-courses = [
-    {
-        'course_id': 'ITSC-3146',
-        'course_name': 'Intro to Operating Systems and Networking',
-        'description': 'Class Description',
-        'teacher': 'Harini Ramaprasad',
-        'rating': 3,  # test rating
-        'grade': 'B',  # test grade
-        'comments': [
-            {
-                'user_id': '1',
-                'name': 'Landon Nalewaja',
-                'rating': '3',
-                'final_grade': 'B',
-                'comment': 'This course was hard.'
-            },
-            {
-                'user_id': '2',
-                'name': 'Ronni Elhadidy',
-                'rating': '4',
-                'final_grade': 'A',
-                'comment': 'It was so much work!'
-            },
-            {
-                'user_id': '3',
-                'name': 'Kendall Tart',
-                'rating': '2',
-                'final_grade': 'C',
-                'comment': 'I thought it was not too bad.'
-            }
-        ]
-    },
-    {
-        'course_id': 'ITSC-3155',
-        'course_name': 'Intro to Software Engineering',
-        'description': 'Class Description',
-        'teacher': 'Jacob Krevat',
-        'rating': 4,  # test rating
-        'grade': 'A',  # test grade
-        'comments': [
-            {
-                'user_id': '1',
-                'name': 'Landon Nalewaja',
-                'rating': '3',
-                'final_grade': 'B',
-                'comment': 'This course was hard.'
-            },
-            {
-                'user_id': '2',
-                'name': 'Ronni Elhadidy',
-                'rating': '4',
-                'final_grade': 'A',
-                'comment': 'It was so much work!'
-            },
-            {
-                'user_id': '3',
-                'name': 'Kendall Tart',
-                'rating': '2',
-                'final_grade': 'C',
-                'comment': 'I thought it was not too bad.'
-            }
-        ]
-    }
-]
-users = {
-    'test_user': {
-        'username': 'test_user',
-        'password_hash': generate_password_hash('test_password'),
-        'email': 'test@example.com' 
-    }
-}
+admin = ['ktart2@uncc.edu', 'ktart2@charlotte.edu', 'ramanna@charlotte.edu', 'ramanna@uncc.edu', 'kamanna@uncc.edu', 'kamanna@charlotte.edu', 'lnalewaj@uncc.edu', 'lnalewaj@charlotte.edu', 'relhadid@charlotte.edu', 'relhadid@uncc.edu']
 
 
 
@@ -263,8 +192,20 @@ def create_course():
 
 @app.get('/courses/<string:course_id>')
 def course_page(course_id):
-    course = course_repo.get_course_by_id(course_id)
-    course_comments = course_repo.get_all_comments_with_course_id(course_id)
+    email = dict(session).get('email', None)
+    name = dict(session).get('name', None)
+    if email in admin:
+        course = course_repo.get_course_by_id(course_id)
+        course_comments = course_repo.get_all_comments_with_course_id(course_id)
+        return render_template('course_details.html', course=course, course_comments=course_comments, showactions=True)
+    if email != None:
+        course = course_repo.get_course_by_id(course_id)
+        course_comments = course_repo.get_all_comments_with_course_id(course_id)
+        return render_template('course_details.html', course=course, course_comments=course_comments, showactions=False)
+    else:
+        course = course_repo.get_course_by_id(course_id)
+        course_comments = course_repo.get_all_comments_with_course_id(course_id)
+        return render_template('course_details.html', course=course, course_comments=course_comments, showactions=False)
     
     return render_template('course_details.html', course=course, course_comments=course_comments)
 

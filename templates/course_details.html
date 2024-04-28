@@ -6,6 +6,7 @@
         <div style="display: flex; gap: 25px; margin-bottom: -1rem;">
             <p><b>Course Number:</b> {{ course.course_id }}</p>
             <p><b>Instructor:</b> {{ course.professor_name }}</p>
+            {% if showactions == true %}
             <p style="margin-bottom: 5px;"><b>Course Actions:</b>
             <div style="display: flex; margin-bottom: 20px; gap: 6px;">
                 <form action="/courses/{{ course.course_id }}/edit" method="get">
@@ -17,6 +18,7 @@
                 </form>
 
             </div></p>
+            {% endif %}
         </div>  
         <p style="margin-bottom: 0rem;"><b>Description:</b></p>
         <p style="margin-bottom: 30px;">{{ course.course_description }}</p>
