@@ -19,6 +19,13 @@ def get_courses_by_name(name):
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(''' SELECT * FROM courses WHERE LOWER(course_name) LIKE LOWER(%s); ''', [f"%{name}%"])
             return cur.fetchall()
+        
+def duplicate_course(name):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''SELECT course_name FROM courses WHERE LOWER(course_name) LIKE LOWER(%s); ''', [f"%{name}%"])
+            return cur.fetchall()
 
 def get_course_by_id(course_id: str):
     pool = get_pool()
@@ -33,6 +40,21 @@ def get_course_by_id(course_id: str):
                 FROM courses
                 WHERE course_id = %s;
             ''', [course_id])
+            return cur.fetchone()
+        
+def get_course_by_name(name: str):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                SELECT
+                    course_id,
+                    course_name,
+                    course_description,
+                    professor_name
+                FROM courses
+                WHERE LOWER(course_name) LIKE LOWER(%s);
+            ''', [f"%{name}%"])
             return cur.fetchone()
 
 def get_all_comments_with_course_id(course_id: str):
