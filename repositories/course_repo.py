@@ -131,3 +131,20 @@ def add_course(id: str, course_name: str, instructor: str, description: str):
                 RETURNING *;
             ''', [id, course_name, description, instructor])
             return cur.fetchone()
+        
+
+def edit_course_page(professor_name: str, course_name: str, course_description: str, course_id: str):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                UPDATE courses
+                SET professor_name = %s, course_name = %s, course_description = %s
+                WHERE course_id = %s
+                RETURNING *;
+            ''', [professor_name, course_name, course_description, course_id])
+            return cur.fetchone()
+
+
+        
+
