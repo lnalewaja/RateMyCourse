@@ -192,7 +192,7 @@ def create_course():
 
 @app.get('/courses/<string:course_id>')
 def course_page(course_id):
-    user_id = session['user_id']
+    user_id = session.get('user_id', None)
     email = dict(session).get('email', None)
     google_id = dict(session).get('id', None)
     name = dict(session).get('name', None)
