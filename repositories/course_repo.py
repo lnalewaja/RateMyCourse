@@ -146,5 +146,17 @@ def edit_course_page(professor_name: str, course_name: str, course_description: 
             return cur.fetchone()
 
 
-        
+def delete_course_from_courses(course_id: str):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                DELETE FROM Courses
+                WHERE course_id = %s
+                RETURNING *;
+            ''', [course_id])
+            return cur.fetchone()
+
+
+
 

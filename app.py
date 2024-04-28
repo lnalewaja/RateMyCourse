@@ -308,10 +308,20 @@ def edit_course(course_id):
     course_description = request.form.get('description')
     
     course_repo.edit_course_page(professor_name, course_name, course_description, course_id)
+
     return redirect(f'/courses/{course_id}')
 
 
 # edit
+
+
+
+
+@app.post('/courses/<string:course_id>/delete')
+def delete_course(course_id):
+    result = course_repo.delete_course_from_courses(course_id)
+    print(course_id)
+    return redirect(url_for('load_courses'))
 
 
 
