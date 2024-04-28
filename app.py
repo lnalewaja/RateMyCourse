@@ -239,17 +239,16 @@ def add_course():
     description = request.form['description']
     course_id = request.form['course_num']
     namelower = name.lower()
-    if course_repo.get_courses_by_name(namelower):
+    existing_course = course_repo.duplicate_course(name)
+    if existing_course:
         flash("Class already exists!")
-        id = course_repo.get_courses_by_name(namelower)
-        existing = id['course_id']
-        return redirect(url_for('course_page', course_id=existing))
+        existing = course_repo.get_course_by_name(name)
+        print(existing)
+        get_id = existing['course_id']
+        return redirect(url_for('course_page', course_id=get_id))
     else:
-        course_repo.add_course(course_id ,name, course, description)
+        course_repo.add_course(course_id, name, course, description)
         return redirect(url_for('course_page', course_id=course_id))
-    # Makes post request to create new course.
-    # add code here to add course to the database
-    return render_template('course_page.html')
 
 @app.route('/create_course')
 def create_course():
