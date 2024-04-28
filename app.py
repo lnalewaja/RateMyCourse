@@ -212,7 +212,7 @@ def course_page(course_id):
 
 @app.post('/courses/<string:course_id>/addComment')
 def add_comment(course_id):
-    user_id = 1 # need to change this value for fully functioning code when user sessions are created.
+    user_id = session['user_id'] # need to change this value for fully functioning code when user sessions are created.
     rating = request.form.get('rating')
     final_grade = request.form.get('final_grade')
     comment = request.form.get('comment')
@@ -291,7 +291,7 @@ def login():
         success, user_id, message = course_repo.login_user(username, password)
         if success:
             session['user_id'] = user_id
-            session['username'] = username  # Store username in session
+            session['name'] = username  # Store username in session
             return redirect(url_for('index'))
         else:
             return redirect(url_for('login', submitted=True, message="Incorrect Password or Email"))
@@ -311,10 +311,10 @@ def authorize():
     resp = google.get('userinfo')
     user_info = resp.json()
     email = user_info['email']
-    name = user_info['name']
+    username = user_info['name']
     
     session['email'] = email
-    session['name'] = name
+    session['name'] = username
     
     if isverified(email) == True:
         # add to user table an isverified option and set to true
@@ -343,10 +343,6 @@ def logout():
     flash('You have been logged out.')
     return redirect(url_for('index'))
 
-@app.get('/signup')
-def show_signup_form():
-    return render_template('signup.html')
-
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -361,11 +357,8 @@ def signup():
         if password != confirm_password:
             flash('Passwords do not match.')
             return redirect(url_for('signup'))
-
-        # Call to the signup_user function in course_repo
-        success, message = course_repo.signup_user(username, email, password)
-        flash(message)
-        if success:
+        if all([username, email, password, confirm_password]):
+            course_repo.signup_user(username, email, password)
             return redirect(url_for('login'))
         else:
             return redirect(url_for('signup'))
