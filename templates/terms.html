@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<style>
+    .bubble {
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin: 20px;
+    }
+    
+    .bubble h1, .bubble h2 {
+        color: #333; /* Change the color to suit your design */
+    }
+    
+    .bubble p {
+        color: #666; /* Change the color to suit your design */
+    }
+    
+    .bubble ul {
+        list-style-type: disc;
+        margin-left: 20px;
+    }
+    
+</style>
+<div class="content">
+    <div class="bubble">
+        <h1>Privacy Policy</h1>
+
+        <p>At RateMyCourse, we take your privacy seriously. This Privacy Policy outlines the types of personal information we collect and how it is used.</p>
+
+        <h2>Information We Collect</h2>
+        <p>We may collect personal information such as your name, email address, mailing address, phone number, and other contact details when you interact with our website or services.</p>
+
+        <h2>How We Use Your Information</h2>
+        <p>We may use the information we collect for various purposes, including:</p>
+        <ul>
+            <li>Providing and maintaining our services</li>
+            <li>Improving our website and services</li>
+            <li>Communicating with you</li>
+            <li>Complying with legal obligations</li>
+        </ul>
+
+        <h2>Security</h2>
+        <p>We take appropriate measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction.</p>
+
+        <h2>Changes to This Policy</h2>
+        <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
+
+        <h2>Contact Us</h2>
+        <p>If you have any questions about this Privacy Policy, please contact us at <a href="mailto:contact@ratemycourse.com">contact@ratemycourse.com</a>.</p>
+    </div>
+</div>
+
+{% endblock %}
