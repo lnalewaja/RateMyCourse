@@ -112,14 +112,28 @@
 
 <div class="modal">
     <span onclick="window.location.href='/'" class="close" title="Close Modal">&times;</span>
-    <form class="modal-content" action="{{ url_for('show_signup_form') }}" method="post">
+    <form class="modal-content" action="{{ url_for('signup') }}" method="post">
         <div class="container">
             <h1>Sign Up</h1>
-            {% if error %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endif %}
+            {% if request.args.get('message') %}
+    <p id="fadeMessage" style="color:#751212">{{ request.args.get('message') }}</p>
+    <script>
+        setTimeout(function () { // this will make the message fade out after 5 seconds
+            var fadeTarget = document.getElementById("fadeMessage");
+            var fadeEffect = setInterval(function () {
+                if (!fadeTarget.style.opacity) {
+                    fadeTarget.style.opacity = 1;
+                }
+                if (fadeTarget.style.opacity > 0) {
+                    fadeTarget.style.opacity -= 0.1;
+                } else {
+                    clearInterval(fadeEffect);
+                    fadeTarget.style.display = 'none';
+                }
+            }, 200);
+        }, 5000);
+    </script>
+{% endif %}
             <hr>
             <label for="username"><b>Username</b></label>
             <input type="text" placeholder="Enter Username" name="username" required>

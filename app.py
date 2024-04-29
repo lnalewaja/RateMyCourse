@@ -192,20 +192,22 @@ def create_course():
 
 @app.get('/courses/<string:course_id>')
 def course_page(course_id):
+    user_id = session.get('user_id', None)
     email = dict(session).get('email', None)
+    google_id = dict(session).get('id', None)
     name = dict(session).get('name', None)
     if email in admin:
         course = course_repo.get_course_by_id(course_id)
         course_comments = course_repo.get_all_comments_with_course_id(course_id)
-        return render_template('course_details.html', course=course, course_comments=course_comments, showactions=True)
+        return render_template('course_details.html', course=course, course_comments=course_comments, user_id=user_id, showactions=True)
     if email != None:
         course = course_repo.get_course_by_id(course_id)
         course_comments = course_repo.get_all_comments_with_course_id(course_id)
-        return render_template('course_details.html', course=course, course_comments=course_comments, showactions=False)
+        return render_template('course_details.html', course=course, course_comments=course_comments, user_id=user_id, showactions=False)
     else:
         course = course_repo.get_course_by_id(course_id)
         course_comments = course_repo.get_all_comments_with_course_id(course_id)
-        return render_template('course_details.html', course=course, course_comments=course_comments, showactions=False)
+        return render_template('course_details.html', course=course, course_comments=course_comments, user_id=user_id, showactions=False)
     
     return render_template('course_details.html', course=course, course_comments=course_comments)
 
@@ -311,19 +313,28 @@ def authorize():
     resp = google.get('userinfo')
     user_info = resp.json()
     email = user_info['email']
+    userid = user_info['id']
     username = user_info['name']
-    
+    googlepass = "Oauth"
+
     session['email'] = email
     session['name'] = username
-    
-    if isverified(email) == True:
-        # add to user table an isverified option and set to true
-        session['verified'] = True
-        return redirect('/')
+    user = course_repo.signup_user(username, email, googlepass, is_oauth=True)
+
+    if user:
+        success, user_id, logged_in_user = course_repo.login_user(email, googlepass, is_oauth=True)
+        print(logged_in_user)
+        print(user_id)
+        if logged_in_user:
+            session['user_id'] = user_id
+            if isverified(email) == True:
+                session['verified'] = True
+        else:
+            session['user_id'] = None
     else:
-        # else set isverified to false
-        session['verified'] = False
-        return redirect('/')
+        session['user_id'] = None
+
+    return redirect('/')
     
     return redirect('/')
 
@@ -345,6 +356,7 @@ def logout():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    message = request.args.get('message', '')
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
@@ -353,14 +365,15 @@ def signup():
 
         if not all([username, email, password, confirm_password]):
             flash('Please fill out all fields.')
-            return redirect(url_for('signup'))
+            return redirect(url_for('signup', submitted=True, message="Please fill out all fields!"))
         if password != confirm_password:
-            flash('Passwords do not match.')
-            return redirect(url_for('signup'))
-        if all([username, email, password, confirm_password]):
-            course_repo.signup_user(username, email, password)
-            return redirect(url_for('login'))
+            return redirect(url_for('signup', submitted=True, message="Password does not match!"))
+
+        success, message = course_repo.signup_user(username, email, password)
+        if not success:
+            return redirect(url_for('signup', submitted=True, message="User already exists!"))
         else:
-            return redirect(url_for('signup'))
+            flash(message)
+            return redirect(url_for('login'))
 
     return render_template('signup.html')
