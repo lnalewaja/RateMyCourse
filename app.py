@@ -354,6 +354,7 @@ def logout():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    message = request.args.get('message', '')
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
@@ -362,14 +363,15 @@ def signup():
 
         if not all([username, email, password, confirm_password]):
             flash('Please fill out all fields.')
-            return redirect(url_for('signup'))
+            return redirect(url_for('signup', submitted=True, message="Please fill out all fields!"))
         if password != confirm_password:
-            flash('Passwords do not match.')
-            return redirect(url_for('signup'))
-        if all([username, email, password, confirm_password]):
-            course_repo.signup_user(username, email, password)
-            return redirect(url_for('login'))
+            return redirect(url_for('signup', submitted=True, message="Password does not match!"))
+
+        success, message = course_repo.signup_user(username, email, password)
+        if not success:
+            return redirect(url_for('signup', submitted=True, message="User already exists!"))
         else:
-            return redirect(url_for('signup'))
+            flash(message)
+            return redirect(url_for('login'))
 
     return render_template('signup.html')
