@@ -1,9 +1,11 @@
 from flask import Flask, redirect, render_template, url_for, session, request, jsonify, flash
 from werkzeug.security import check_password_hash, generate_password_hash
+import requests
 from dotenv import load_dotenv
 import openai
 import os
 from authlib.integrations.flask_client import OAuth
+from requests.structures import CaseInsensitiveDict
 
 openai.api_key = os.environ.get('api_key')
 
@@ -28,6 +30,25 @@ google = oauth.register(
     client_kwargs={'scope': 'openid profile email'},
     jwks_uri='https://www.googleapis.com/oauth2/v3/certs',
 )
+
+
+def is_valid(email: str):
+    url = f"https://www.ipqualityscore.com/api/json/email/x6909hRFZmkdLzmcNP4jBNZ0C0Lq5Q1m/{email}"
+
+    headers = CaseInsensitiveDict()
+    headers["apikey"] = os.environ.get('email_validate')
+
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        json_resp = response.json()
+        format_valid = json_resp["format_valid"]
+        mx_found = json_resp["mx_found"]
+        smtp_check = json_resp["smtp_check"]
+        state = json_resp["state"]
+
+        return format_valid and mx_found and smtp_check and state == "deliverable"
+
+    return False
 
 
 admin = ['ktart2@uncc.edu', 'ktart2@charlotte.edu', 'ramanna@charlotte.edu', 'ramanna@uncc.edu', 'kamanna@uncc.edu', 'kamanna@charlotte.edu', 'lnalewaj@uncc.edu', 'lnalewaj@charlotte.edu', 'relhadid@charlotte.edu', 'relhadid@uncc.edu']
@@ -288,10 +309,10 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        success, user_id, message = course_repo.login_user(username, password)
+        success, user_id, user_name, message = course_repo.login_user(username, password)
         if success:
             session['user_id'] = user_id
-            session['name'] = username  # Store username in session
+            session['name'] = user_name  # Store username in session
             return redirect(url_for('index'))
         else:
             return redirect(url_for('login', submitted=True, message="Incorrect Password or Email"))
@@ -320,7 +341,7 @@ def authorize():
     user = course_repo.signup_user(username, email, googlepass, is_oauth=True)
 
     if user:
-        success, user_id, logged_in_user = course_repo.login_user(email, googlepass, is_oauth=True)
+        success, user_id, user, logged_in_user = course_repo.login_user(email, googlepass, is_oauth=True)
         print(logged_in_user)
         print(user_id)
         if logged_in_user:
@@ -360,13 +381,15 @@ def signup():
         email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
+        #validate = is_valid(email)  #added email validation on signup, it uses a free api that only has 100 requests a month
 
         if not all([username, email, password, confirm_password]):
             flash('Please fill out all fields.')
-            return redirect(url_for('signup', submitted=True, message="Please fill out all fields!"))
+            return redirect(url_for('signup', submitted=True, message="Please fill out all fields"))
         if password != confirm_password:
             return redirect(url_for('signup', submitted=True, message="Password does not match!"))
-
+        #if validate == False:
+        #    return redirect(url_for('signup', submitted=True, message="Please use a valid email address!"))
         success, message = course_repo.signup_user(username, email, password)
         if not success:
             return redirect(url_for('signup', submitted=True, message="User already exists!"))

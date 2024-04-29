@@ -134,21 +134,21 @@ def signup_user(username: str, email: str, password: str, is_oauth: bool = False
             return True, 'Registration successful, please login.'
         
 
-def login_user(username: str, password: str, is_oauth: bool = False):
+def login_user(email: str, password: str, is_oauth: bool = False):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor() as cur:
             # Check if the user exists and fetch credentials
-            cur.execute('SELECT user_id, password, is_oauth FROM Users WHERE username = %s OR email = %s', (username, username))
+            cur.execute('SELECT user_id, username, password, is_oauth FROM Users WHERE email = %s', (email,))
             user_record = cur.fetchone()
             if user_record:
-                user_id, password_hash, user_is_oauth = user_record
+                user_id, username, password_hash, user_is_oauth = user_record
                 # Verify the password
                 if is_oauth and user_is_oauth:
                     # For OAuth users, skip password verification
-                    return True, user_id, 'Login successful'
+                    return True, user_id, username, 'Login successful'
                 elif not is_oauth and check_password_hash(password_hash, password):
-                    return True, user_id, 'Login successful'
+                    return True, user_id, username, 'Login successful'
             return False, None, 'Invalid username or password'
         
 def add_course(id: str, course_name: str, instructor: str, description: str):
