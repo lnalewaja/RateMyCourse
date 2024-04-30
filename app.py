@@ -196,20 +196,28 @@ def course_page(course_id):
     email = dict(session).get('email', None)
     google_id = dict(session).get('id', None)
     name = dict(session).get('name', None)
+    course = course_repo.get_course_by_id(course_id)
+    course_comments = course_repo.get_all_comments_with_course_id(course_id)
+    rating = 0 
+    for comment in course_comments:
+        rating += comment['rating']
+    if (len(course_comments) == 0):
+        rating = "No Ratings"
+    else:
+        rating = round(rating / len(course_comments), 2)
     if email in admin:
         course = course_repo.get_course_by_id(course_id)
         course_comments = course_repo.get_all_comments_with_course_id(course_id)
-        return render_template('course_details.html', course=course, course_comments=course_comments, user_id=user_id, showactions=True)
+        return render_template('course_details.html', course=course, course_comments=course_comments, rating=rating, user_id=user_id, showactions=True)
     if email != None:
         course = course_repo.get_course_by_id(course_id)
         course_comments = course_repo.get_all_comments_with_course_id(course_id)
-        return render_template('course_details.html', course=course, course_comments=course_comments, user_id=user_id, showactions=False)
+        return render_template('course_details.html', course=course, course_comments=course_comments, rating=rating, user_id=user_id, showactions=False)
     else:
         course = course_repo.get_course_by_id(course_id)
         course_comments = course_repo.get_all_comments_with_course_id(course_id)
-        return render_template('course_details.html', course=course, course_comments=course_comments, user_id=user_id, showactions=False)
-    
-    return render_template('course_details.html', course=course, course_comments=course_comments)
+        return render_template('course_details.html', course=course, course_comments=course_comments, rating=rating, user_id=user_id, showactions=False)
+    return render_template('course_details.html', course=course, course_comments=course_comments, user_id=user_id, showactions=False)
 
 
 @app.post('/courses/<string:course_id>/addComment')
