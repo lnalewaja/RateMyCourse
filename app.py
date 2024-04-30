@@ -307,7 +307,9 @@ def delete_course(course_id):
 def faq():
     return render_template('faq.html')
 
-
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
 
 
 if __name__ == '__main__':

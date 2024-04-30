@@ -1,68 +1,71 @@
 {% extends "layout.html" %}
 
-
 {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Comment for {{ session['username'] }}</title>
     <style>
-        /* Style to display form elements and headers */
+        /* Styles for displaying form elements and headers */
         body {
             text-align: center;
             /* Align the content in the center */
+            font-family: Arial, sans-serif;
         }
 
 
         .form-container {
-            display: inline-block;
-            /* Center the form horizontally */
-            text-align: left;
-            /* Reset text alignment for form content */
+            width: 60%;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0px 2px 10px #6b715c;
+            background-color: #f9f9f9;
         }
-
 
         .form-row {
             display: flex;
             align-items: center;
+            justify-content: center; /* Center items horizontally */
             margin-bottom: 10px;
         }
 
-
         .form-row label {
+            width: 150px;
             margin-right: 10px;
             font-weight: bold;
             font-size: larger;
+            text-align: right;
         }
 
-
+        .form-row input[type="text"],
         .form-row textarea {
-            width: 100%;
-            resize: vertical;
-            /* Allow vertical resizing */
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 16px;
         }
 
+        .form-row .btn-primary {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-        .comment {
-            padding: 5px;
-            border: 1px solid lightgray;
-            border-radius: 5px;
-            margin-bottom: 10px;
+        .form-row .btn-primary:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
-
-
-
-
-
-
-
-
 <body>
     <div class="container">
         <h1 style="text-align: center;">Edit Course</h1>
@@ -86,12 +89,9 @@
             </div>
         </form>
     </div>
+    <br>
 
 
 </body>
-
-
-
-
 </html>
 {% endblock %}
