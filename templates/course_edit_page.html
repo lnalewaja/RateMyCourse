@@ -67,29 +67,25 @@
     </style>
 </head>
 <body>
-    <br>
-    <br>
-    <br>
-    <br>
-
-
-    <div class="form-container">
-        <h1>Edit Course</h1>
-        <form action="/courses/{{ course.course_id }}/edit_course" method="POST">
-            <div class="form-row">
-                <label for="course_name">Course Name:</label>
-                <input type="text" id="course_name" name="course_name" value="{{ course.course_name }}">
-            </div>
-            <div class="form-row">
-                <label for="instructor">Instructor:</label>
-                <input type="text" id="instructor" name="instructor" value="{{ course.professor_name }}">
-            </div>
-            <div class="form-row">
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" rows="4">{{ course.course_description }}</textarea>
-            </div>
-            <div class="form-row">
-                <input type="submit" class="btn btn-primary" value="Save Changes">
+    <div class="container">
+        <h1 style="text-align: center;">Edit Course</h1>
+        <form action="/courses/{{ course.course_id }}/edit_course" method="POST" class="mt-4">
+            <div class="row justify-content-md-center">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="course_name">Course Name:</label>
+                        <input type="text" class="form-control" id="course_name" name="course_name"
+                            value="{{ course.course_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" id="description" name="description"
+                            rows="4">{{ course.course_description }}</textarea>
+                    </div>
+                    <div style="padding-top: 2%" class="text-center">
+                        <input type="submit" class="btn btn-primary" value="Save Changes">
+                    </div>
+                </div>
             </div>
         </form>
     </div>
