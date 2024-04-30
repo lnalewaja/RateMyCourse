@@ -185,7 +185,7 @@ def chat():
 @app.post('/courses/new')
 def add_course():
     name = request.form['course_name']
-    course = request.form['instructor']
+    course = ""
     description = request.form['description']
     course_id = request.form['course_num']
     namelower = name.lower()
@@ -239,7 +239,8 @@ def add_comment(course_id):
     rating = request.form.get('rating')
     final_grade = request.form.get('final_grade')
     comment = request.form.get('comment')
-    result = course_repo.add_comment_to_course(course_id, user_id, rating, final_grade, comment)
+    professor_name = request.form.get('professor_name')
+    result = course_repo.add_comment_to_course(course_id, user_id, rating, final_grade, comment, professor_name)
     return redirect(f'/courses/{course_id}')
 
 @app.post('/courses/<string:course_id>/editComment')
@@ -248,7 +249,9 @@ def edit_comment(course_id):
     final_grade = request.form.get('final_grade')
     comment = request.form.get('comment')
     review_id = request.form.get('review_id')
-    result = course_repo.edit_comment_from_course(course_id, review_id, rating, final_grade, comment)
+    professor_name = request.form.get('professor_name')
+    print(professor_name)
+    result = course_repo.edit_comment_from_course(course_id, review_id, rating, final_grade, comment, professor_name)
     return redirect(f'/courses/{course_id}')
 
 @app.post('/courses/<string:course_id>/deleteComment')
@@ -282,9 +285,17 @@ def edit_course(course_id):
 
 @app.post('/courses/<string:course_id>/delete')
 def delete_course(course_id):
-    result = course_repo.delete_course_from_courses(course_id)
-    print(course_id)
-    return redirect(url_for('load_courses'))
+    try:
+        # Attempt to delete the course and its reviews
+        course, reviews = course_repo.delete_course_from_courses(course_id)
+        if course:
+            message = f"Course and all associated reviews deleted successfully. {len(reviews)} reviews removed."
+        else:
+            message = "No such course found."
+    except Exception as e:
+        message = f"Error during deletion: {str(e)}"
+
+    return redirect(url_for('load_courses', message=message))
 
 
 

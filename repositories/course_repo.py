@@ -24,7 +24,11 @@ def duplicate_course(name):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute('''SELECT course_name FROM courses WHERE LOWER(course_name) LIKE LOWER(%s); ''', [f"%{name}%"])
+            cur.execute('''
+                SELECT course_name
+                FROM courses 
+                WHERE LOWER(course_name) LIKE LOWER(%s);
+            ''', [f"%{name}%"])
             return cur.fetchall()
 
 def get_course_by_id(course_id: str):
@@ -67,36 +71,36 @@ def get_all_comments_with_course_id(course_id: str):
                     r.comment,
                     r.rating,
                     r.final_grade,
+                    r.professor_name,
                     r.user_id,
                     u.username
                 FROM reviews r
-                JOIN courses c ON r.course_id = c.course_id
                 JOIN users u ON r.user_id = u.user_id
                 WHERE r.course_id = %s;
             ''', [course_id])
             return cur.fetchall()
 
-def add_comment_to_course(course_id: str, user_id: str, rating: int, final_grade: str, comment: str):
+def add_comment_to_course(course_id: str, user_id: str, rating: int, final_grade: str, comment: str, professor_name: str):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
-                INSERT INTO reviews (course_id, user_id, comment, rating, final_grade)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO reviews (course_id, user_id, comment, rating, final_grade, professor_name)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 RETURNING *;
-            ''', [course_id, user_id, comment, rating, final_grade])
+            ''', [course_id, user_id, comment, rating, final_grade, professor_name])
             return cur.fetchone()
 
-def edit_comment_from_course(course_id: str, review_id: str, rating: int, final_grade: str, comment: str):
+def edit_comment_from_course(course_id: str, review_id: str, rating: int, final_grade: str, comment: str, professor_name: str):
     pool = get_pool()
     with pool.connection() as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute('''
                 UPDATE reviews
-                SET comment = %s, rating = %s, final_grade = %s
+                SET comment = %s, rating = %s, final_grade = %s, professor_name = %s
                 WHERE course_id = %s AND review_id = %s
                 RETURNING *;
-            ''', [comment, rating, final_grade, course_id, review_id])
+            ''', [comment, rating, final_grade, professor_name, course_id, review_id])
             return cur.fetchone()
 
 def delete_comment_from_course(course_id: str, user_id: str, review_id: str):
@@ -179,13 +183,27 @@ def edit_course_page(professor_name: str, course_name: str, course_description: 
 def delete_course_from_courses(course_id: str):
     pool = get_pool()
     with pool.connection() as conn:
-        with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute('''
-                DELETE FROM Courses
-                WHERE course_id = %s
-                RETURNING *;
-            ''', [course_id])
-            return cur.fetchone()
+        try:
+            with conn.cursor() as cur:
+                cur.execute('''
+                    DELETE FROM Reviews
+                    WHERE course_id = %s
+                    RETURNING *;
+                ''', (course_id,))
+                reviews = cur.fetchall()
+
+                cur.execute('''
+                    DELETE FROM Courses
+                    WHERE course_id = %s
+                    RETURNING *;
+                ''', (course_id,))
+                course = cur.fetchone()
+
+            conn.commit()
+            return course, reviews
+        except Exception as e:
+            conn.rollback()
+            raise e
 
 
 
