@@ -185,7 +185,7 @@
                     </li>
                 </ul>
                 {% if not no_search_bar %}
-                <div style="padding-left: 8%" class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center">
                     <form action="{{ url_for('load_courses') }}" method="GET" class="d-flex">
                         <input type="text" class="form-control" placeholder="Course Search" name="search_query">
                         <button style="color:white" class="btn btn-outline" type="submit">Search</button>
