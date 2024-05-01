@@ -23,6 +23,16 @@
         margin-left: 20px;
     }
     
+    /* Easter egg styles */
+    .hidden-message {
+        display: none;
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+    .hidden-message.show {
+        display: block;
+    }
 </style>
 <div class="content">
     <div class="bubble">
@@ -50,7 +60,17 @@
 
         <h2>Contact Us</h2>
         <p>If you have any questions about this Privacy Policy, please contact us at <a href="mailto:contact@ratemycourse.com">contact@ratemycourse.com</a>.</p>
+        
+        <!-- Easter egg hidden message -->
+        <p><span class="easter-egg">Click here for a hidden message!</span></p>
+        <div class="hidden-message" id="hidden-message">Congratulations! You've been hacked! Just kidding, don't click random links!</div>
     </div>
 </div>
+
+<script>
+    document.querySelector('.easter-egg').addEventListener('click', function() {
+        document.getElementById('hidden-message').classList.add('show');
+    });
+</script>
 
 {% endblock %}
