@@ -1,47 +1,161 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="center-img">
-    <h1 style="padding-bottom:5%"><b>Login</b></h1>
-</div>
-<div class="center-img">
-    <form action="/Ologin">
-        <button type="submit" class="google-sign-in-button">
-            Sign in with Google
-        </button>
-    </form>
-</div>
-<div class="container mt-5">
-    <h2 class="fancy" style="--w: 50vw;--c: #193d5e;--b:4px;--g: 40px; color:#193d5e">Or</h2>
-    {% if message %}
-    <p id="fadeMessage" style="color:#751212">{{ message }}</p>
-    <script>
-        setTimeout(function () { // this will make the message fade out after 5 seconds
-            var fadeTarget = document.getElementById("fadeMessage");
-            var fadeEffect = setInterval(function () {
-                if (!fadeTarget.style.opacity) {
-                    fadeTarget.style.opacity = 1;
-                }
-                if (fadeTarget.style.opacity > 0) {
-                    fadeTarget.style.opacity -= 0.1;
-                } else {
-                    clearInterval(fadeEffect);
-                    fadeTarget.style.display = 'none';
-                }
-            }, 200);
-        }, 5000);
-    </script>
-    {% endif %}
-    <form action="{{ url_for('login') }}" method="post">
-        <div class="mb-3">
-            <label for="username" class="form-label">Email</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+<head>
+<style>
+/* Your CSS styles here */
+/* Full-width input fields */
+input[type=text], input[type=password], input[type=email] {
+    width: 100%;
+    padding: 15px;
+    display: inline-block;
+    border: none;
+    background: #f1f1f1;
+}
+/* Add a background color when the inputs get focus */
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+/* Set a style for all buttons */
+button {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 48%; /* Adjusted width for side-by-side buttons */
+    opacity: 0.9;
+    box-sizing: border-box; /* Include padding and border in the width */
+}
+button:hover {
+    opacity:1;
+}
+/* Extra styles for the cancel button */
+.cancelbtn {
+    background-color: #f44336;
+    float: left; /* Float cancel button to the left */
+}
+/* Add padding to container elements */
+.container {
+    padding: 16px;
+    overflow: auto; /* Clear floats */
+    width: 100%; /* Full width */
+}
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 35px;
+    top: 15px;
+    font-size: 40px;
+    font-weight: bold;
+    color: #f1f1f1;
+}
+.close:hover,
+.close:focus {
+    color: #f44336;
+    cursor: pointer;
+}
+/* Clear floats */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+/* Change styles for cancel button and signup button on extra small screens */
+.center-img {
+    text-align: center;
+}
+/* Style for the container */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Style for the cancel and login buttons */
+.cancelbtn, .loginbtn {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 4px;
+    border: none;
+    cursor: pointer;
+    width: calc(50% - 4px); /* Adjusted width for side-by-side buttons with margin */
+    box-sizing: border-box; /* Include padding and border in the width */
+}
+
+/* Positioning with flexbox */
+.clearfix {
+    display: flex;
+}
+
+.cancelbtn {
+    order: 1; /* Specify order for the cancel button */
+    background-color: #f44336;
+}
+
+.loginbtn {
+    order: 2; /* Specify order for the login button */
+}
+
+/* On hover, increase opacity */
+.cancelbtn:hover, .loginbtn:hover {
+    opacity: 0.8;
+}
+
+/* On click, increase opacity */
+.cancelbtn:active, .loginbtn:active {
+    opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<!-- Your content here -->
+<div class="container">
+    <h1 style="text-align: center;">Login</h1>
+    <br>
+    <div class="center-img">
+        <form id="googleLoginForm" action="/Ologin">
+            <button style="width: 100%" type="submit" class="google-sign-in-button">
+                Sign in with Google
+            </button>
+        </form>
+    </div>
+    <form action="{{ url_for('login') }}" method="post" id="loginForm">
+            {% if message %}
+            <p id="fadeMessage" style="color:#751212">{{ message }}</p>
+            <script>
+                setTimeout(function () { // this will make the message fade out after 5 seconds
+                    var fadeTarget = document.getElementById("fadeMessage");
+                    var fadeEffect = setInterval(function () {
+                        if (!fadeTarget.style.opacity) {
+                            fadeTarget.style.opacity = 1;
+                        }
+                        if (fadeTarget.style.opacity > 0) {
+                            fadeTarget.style.opacity -= 0.1;
+                        } else {
+                            clearInterval(fadeEffect);
+                            fadeTarget.style.display = 'none';
+                        }
+                    }, 200);
+                }, 5000);
+            </script>
+            {% endif %}
+            <hr>
+            <label for="username"><b>Email</b></label>
+            <input type="text" placeholder="Enter Email" name="username" required>
+            <label for="password"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="password" required>
+            <div class="clearfix">
+                <button type="button" onclick="window.location.href='/'" class="cancelbtn">Cancel</button>
+                <button type="submit" class="loginbtn">Login</button>
+            </div>
+            <p>By creating an account you agree to our <a href="/terms" style="color:dodgerblue">Terms & Privacy</a>.</p>
         </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Log In</button>
     </form>
-</div>
+</body>
+</html>
 {% endblock %}

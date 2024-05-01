@@ -21,7 +21,6 @@ CREATE TABLE Courses (
 CREATE TABLE Reviews (
     review_id SERIAL PRIMARY KEY,
     course_id VARCHAR(50) NOT NULL,
-    professor_name VARCHAR(255) NOT NULL,
     user_id INT NOT NULL,
     rating INT,
     final_grade CHAR(1),
