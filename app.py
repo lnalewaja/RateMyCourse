@@ -330,15 +330,15 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        success, user_id, user_name, message = course_repo.login_user(username, password)
+        success, user_id, user_name = course_repo.login_user(username, password)
         if success:
             session['user_id'] = user_id
             session['name'] = user_name  # Store username in session
             return redirect(url_for('index'))
         else:
-            return redirect(url_for('login', submitted=True, message="Incorrect Password or Email"))
+            return redirect(url_for('login', no_search_bar=True, message="Incorrect Password or Email"))
 
-    return render_template('login.html', message=message)
+    return render_template('login.html', no_search_bar=True, message=message)
 
 @app.route('/Ologin', methods=['GET', 'POST'])
 def Ologin():
