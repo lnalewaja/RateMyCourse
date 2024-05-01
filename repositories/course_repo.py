@@ -150,9 +150,9 @@ def login_user(email: str, password: str, is_oauth: bool = False):
                 # Verify the password
                 if is_oauth and user_is_oauth:
                     # For OAuth users, skip password verification
-                    return True, user_id, username, 'Login successful'
+                    return True, user_id, username
                 elif not is_oauth and check_password_hash(password_hash, password):
-                    return True, user_id, username, 'Login successful'
+                    return True, user_id, username
             return False, None, 'Invalid username or password'
         
 def add_course(id: str, course_name: str, instructor: str, description: str):
