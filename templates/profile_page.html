@@ -9,49 +9,50 @@
         <div>
             <h3 style="margin: 0; padding-bottom: 15px;"><b>Welcome {{ name }}!</b></h3>
             {% if email:%}
-            <p><b>Email: {{ email }}</b></p>
+                <p><b>Email: {{ email }}</b></p>
+            {% else: %}
+                <p id="change-password-toggle" style="margin-bottom: 1px; cursor: pointer; color: #193d5e;"><b>Change Password <i class="fa-solid fa-chevron-right"></i></b></p>
+                <form id="change-password-form" action="/profile/update" method="post" style="display: none; margin-top: 1px; margin-bottom: 25px;">
+                    <label for="password">Password: </label><br>
+                    <input type="password" id="password" name="password" placeholder="Enter Password Here" required><br>
+                    <label for="confirm_password">Confirm Password: </label><br>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Enter Password Here" required><br>
+                    <button class="btn btn-primary" style="margin-top: 10px; background-color:green; font-size: 14px;" type="submit">Submit Password</button>
+                </form>
+
+                <p id="delete-account-toggle" style="margin-top: 10px; margin-bottom: 1px; cursor: pointer; color: #193d5e;"><b>Delete Account <i class="fa-solid fa-chevron-right"></i></b></p>
+                <form id="delete-account-form" action="/profile/delete" method="post" style="display: none; margin-top: 1px; margin-bottom: 15px;">
+                    <label for="confirm_password">Are you sure you want to delete your account? </label><br>
+                    <button class="btn btn-primary" style="margin-top: 10px; background-color:red; font-size: 14px;" type="submit">Delete Account</button>
+                </form>
+
+                <script>
+                    document.getElementById('change-password-toggle').addEventListener('click', function() {
+                        var form = document.getElementById('change-password-form');
+                        var text = document.getElementById('change-password-toggle').getElementsByTagName('b')[0];
+
+                        if (form.style.display === 'none') {
+                            form.style.display = 'inline-block';
+                            text.innerHTML = 'Change Password <i class="fa-solid fa-chevron-down"></i>';
+                        } else {
+                            form.style.display = 'none';
+                            text.innerHTML = 'Change Password <i class="fa-solid fa-chevron-right">';
+                        }
+                    });
+
+                    document.getElementById('delete-account-toggle').addEventListener('click', function() {
+                        var form = document.getElementById('delete-account-form');
+                
+                        if (form.style.display === 'none') {
+                            form.style.display = 'block';
+                            document.getElementById('delete-account-toggle').getElementsByTagName('b')[0].getElementsByTagName('i')[0].className = 'fa-solid fa-chevron-down';
+                        } else {
+                            form.style.display = 'none';
+                            document.getElementById('delete-account-toggle').getElementsByTagName('b')[0].getElementsByTagName('i')[0].className = 'fa-solid fa-chevron-right';
+                        }
+                    });
+                </script>
             {% endif %}
-            <p id="change-password-toggle" style="margin-bottom: 1px; cursor: pointer; color: #193d5e;"><b>Change Password <i class="fa-solid fa-chevron-right"></i></b></p>
-            <form id="change-password-form" action="/profile/update" method="post" style="display: none; margin-top: 1px; margin-bottom: 25px;">
-                <label for="password">Password: </label><br>
-                <input type="password" id="password" name="password" placeholder="Enter Password Here" required><br>
-                <label for="confirm_password">Confirm Password: </label><br>
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="Enter Password Here" required><br>
-                <button class="btn btn-primary" style="margin-top: 10px; background-color:green; font-size: 14px;" type="submit">Submit Password</button>
-            </form>
-
-            <p id="delete-account-toggle" style="margin-top: 10px; margin-bottom: 1px; cursor: pointer; color: #193d5e;"><b>Delete Account <i class="fa-solid fa-chevron-right"></i></b></p>
-            <form id="delete-account-form" action="/profile/update" method="post" style="display: none; margin-top: 1px; margin-bottom: 15px;">
-                <label for="confirm_password">Are you sure you want to delete your account? </label><br>
-                <button class="btn btn-primary" style="margin-top: 10px; background-color:red; font-size: 14px;" type="submit">Delete Account</button>
-            </form>
-
-            <script>
-                document.getElementById('change-password-toggle').addEventListener('click', function() {
-                    var form = document.getElementById('change-password-form');
-                    var text = document.getElementById('change-password-toggle').getElementsByTagName('b')[0];
-
-                    if (form.style.display === 'none') {
-                        form.style.display = 'inline-block';
-                        text.innerHTML = 'Change Password <i class="fa-solid fa-chevron-down"></i>';
-                    } else {
-                        form.style.display = 'none';
-                        text.innerHTML = 'Change Password <i class="fa-solid fa-chevron-right">';
-                    }
-                });
-
-                document.getElementById('delete-account-toggle').addEventListener('click', function() {
-                    var form = document.getElementById('delete-account-form');
-            
-                    if (form.style.display === 'none') {
-                        form.style.display = 'block';
-                        document.getElementById('delete-account-toggle').getElementsByTagName('b')[0].getElementsByTagName('i')[0].className = 'fa-solid fa-chevron-down';
-                    } else {
-                        form.style.display = 'none';
-                        document.getElementById('delete-account-toggle').getElementsByTagName('b')[0].getElementsByTagName('i')[0].className = 'fa-solid fa-chevron-right';
-                    }
-                });
-            </script>
             <br>
             <div>
                 {% if comments|length > 0:%}
