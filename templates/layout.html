@@ -208,6 +208,9 @@
                                     href="{{ url_for('load_courses') }}">Courses</a>
                                 <a class="nav-link active" style="color:white" aria-current="page" href="/gpt">AI
                                     Chat</a>
+                                {% if session.get('name') %}
+                                <a class="nav-link active" style="color:white" aria-current="page" href="/profile">Profile</a>
+                                {% endif %}
                             </li>
                         </ul>
                         {% if not no_search_bar %}
