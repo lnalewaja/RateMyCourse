@@ -428,16 +428,21 @@ def load_profile():
     else:
         return redirect('/login')
 
-    # @app.post('/profile/update')
-    # def update_user():
-    #     #edit this in a second
-    #     # password = request.form['password']
-    #     # confirm_password = request.form['confirm_password']
-    #     # if password != confirm_password:
-    #     #     return redirect(url_for('load_profile', message="Password does not match!"))
-    #     # success, message = course_repo.update_user(name, email, password)
-    #     # if not success:
-    #     #     return redirect(url_for('load_profile', message=message))
-    #     # else:
-    #     #     session['name'] = name
-    #     #     return redirect(url_for('load_profile', message=message))
+@app.post('/profile/update')
+def update_user():
+    if len(session) > 1:
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        if password == confirm_password:
+            course_repo.update_user_password(session['user_id'], password)
+            return redirect('/profile')
+        else:
+            return redirect('/profile')
+    return redirect('/login')
+
+@app.post('/profile/delete')
+def delete_user():
+    if len(session) > 1:
+        course_repo.delete_user(session['user_id'])
+        return redirect('/logout')
+    return redirect('/login')
