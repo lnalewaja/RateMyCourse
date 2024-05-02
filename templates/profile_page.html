@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{% block content %}
+<script src="https://kit.fontawesome.com/a657967bb7.js" crossorigin="anonymous"></script>
+<body>
+    <!-- <div>
+        <h1 style="margin-bottom: 2rem;">Profile Page</h1>
+    </div> -->
+    <div style="background-color: lightgray; padding: 1.2rem; border: 3px solid black; border-radius: 5px;">
+        <div>
+            <h3 style="margin: 0; padding-bottom: 15px;"><b>Welcome {{ name }}!</b></h3>
+            {% if email:%}
+            <p><b>Email: {{ email }}</b></p>
+            {% endif %}
+            <p id="change-password-toggle" style="margin-bottom: 1px; cursor: pointer; color: #193d5e;"><b>Change Password <i class="fa-solid fa-chevron-right"></i></b></p>
+            <form id="change-password-form" action="/profile/update" method="post" style="display: none; margin-top: 1px; margin-bottom: 25px;">
+                <label for="password">Password: </label><br>
+                <input type="password" id="password" name="password" placeholder="Enter Password Here" required><br>
+                <label for="confirm_password">Confirm Password: </label><br>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Enter Password Here" required><br>
+                <button class="btn btn-primary" style="margin-top: 10px; background-color:green; font-size: 14px;" type="submit">Submit Password</button>
+            </form>
+
+            <p id="delete-account-toggle" style="margin-top: 10px; margin-bottom: 1px; cursor: pointer; color: #193d5e;"><b>Delete Account <i class="fa-solid fa-chevron-right"></i></b></p>
+            <form id="delete-account-form" action="/profile/update" method="post" style="display: none; margin-top: 1px; margin-bottom: 15px;">
+                <label for="confirm_password">Are you sure you want to delete your account? </label><br>
+                <button class="btn btn-primary" style="margin-top: 10px; background-color:red; font-size: 14px;" type="submit">Delete Account</button>
+            </form>
+
+            <script>
+                document.getElementById('change-password-toggle').addEventListener('click', function() {
+                    var form = document.getElementById('change-password-form');
+                    var text = document.getElementById('change-password-toggle').getElementsByTagName('b')[0];
+
+                    if (form.style.display === 'none') {
+                        form.style.display = 'inline-block';
+                        text.innerHTML = 'Change Password <i class="fa-solid fa-chevron-down"></i>';
+                    } else {
+                        form.style.display = 'none';
+                        text.innerHTML = 'Change Password <i class="fa-solid fa-chevron-right">';
+                    }
+                });
+
+                document.getElementById('delete-account-toggle').addEventListener('click', function() {
+                    var form = document.getElementById('delete-account-form');
+            
+                    if (form.style.display === 'none') {
+                        form.style.display = 'block';
+                        document.getElementById('delete-account-toggle').getElementsByTagName('b')[0].getElementsByTagName('i')[0].className = 'fa-solid fa-chevron-down';
+                    } else {
+                        form.style.display = 'none';
+                        document.getElementById('delete-account-toggle').getElementsByTagName('b')[0].getElementsByTagName('i')[0].className = 'fa-solid fa-chevron-right';
+                    }
+                });
+            </script>
+            <br>
+            <div>
+                {% if comments|length > 0:%}
+                    <h2 style="margin: 0; padding-bottom: 15px;">My Comments:</h2>
+                {% else %}
+                    <h2 style="margin: 0; padding-bottom: 15px;">No Comments To Display.</h2>
+                {% endif %}
+            </div>
+        </div>
+        
+
+        <!-- Starts Here -->
+        {% for comment in comments %}
+            <div class="comment-container"
+                style="background-color: #f0f0f0; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1); width: calc(100% - 40px); position: relative; text-align: left; ">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 98%;">
+                    <div style="width: 95%;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <p style="margin-bottom: 0px;"><b>{{ name }}</b></p>
+                            <div style="display: flex; gap: 30px;" class="rating-grade-info">
+                                <p style="margin-bottom: 0px;" class="rating-grade-info"><b>Instructor:</b> {{
+                                    comment.professor_name }}</p>
+                                    <p style="margin-bottom: 0px;" class="rating-grade-info"><b>Course:</b> {{
+                                        comment.course_id }}</p>
+                                <p style="margin-bottom: 0px;" class="rating-grade-info"><b>Rating:</b> {{
+                                    comment.rating }}</p>
+                                <p style="margin-bottom: 0px;" class="rating-grade-info"><b>Final Grade:</b> {{
+                                    comment.final_grade }}</p>
+                                
+                            </div>
+                        </div>
+                        <p style="margin-bottom: 15px;" class="rating-grade-info">{{ comment.comment }}</p>
+                    </div>
+                    <form action="/courses/{{ comment.course_id}}" method="get">
+                        <button class="btn btn-primary" style="background-color:rgb(42, 75, 85)"><i class="fa-solid fa-arrow-right"></i></button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        <!-- Ends Here -->
+
+    </div>
+</body>
+
+{% endblock %}
