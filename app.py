@@ -416,5 +416,33 @@ def signup():
         else:
             flash(message)
             return redirect(url_for('login'))
-
     return render_template('signup.html')
+
+@app.get('/profile')
+def load_profile():
+    if len(session) > 1:
+        name = session['name']
+        email = dict(session).get('email', None)
+        comments = course_repo.get_all_comments_with_user_id(session['user_id'])
+        return render_template('profile_page.html', name=name, email=email, comments=comments)
+    else:
+        return redirect('/login')
+
+@app.post('/profile/update')
+def update_user():
+    if len(session) > 1:
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        if password == confirm_password:
+            course_repo.update_user_password(session['user_id'], password)
+            return redirect('/profile')
+        else:
+            return redirect('/profile')
+    return redirect('/login')
+
+@app.post('/profile/delete')
+def delete_user():
+    if len(session) > 1:
+        course_repo.delete_user(session['user_id'])
+        return redirect('/logout')
+    return redirect('/login')

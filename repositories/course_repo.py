@@ -80,6 +80,23 @@ def get_all_comments_with_course_id(course_id: str):
             ''', [course_id])
             return cur.fetchall()
 
+def get_all_comments_with_user_id(user_id: int):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute('''
+                SELECT 
+                    course_id, 
+                    professor_name, 
+                    rating, 
+                    final_grade, 
+                    comment,
+                    course_id 
+                FROM Reviews r
+                WHERE r.user_id = %s;
+            ''', [user_id])
+            return cur.fetchall()
+
 def add_comment_to_course(course_id: str, user_id: str, rating: int, final_grade: str, comment: str, professor_name: str):
     pool = get_pool()
     with pool.connection() as conn:
@@ -136,7 +153,33 @@ def signup_user(username: str, email: str, password: str, is_oauth: bool = False
                         (username, email, password_hash, is_oauth))
             conn.commit()
             return True, 'Registration successful, please login.'
-        
+
+def update_user_password(user_id: int, password: str):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            password_hash = generate_password_hash(password)
+            cur.execute('''
+                            UPDATE Users
+                            SET password = %s
+                            WHERE user_id = %s;
+                        ''', (password_hash, user_id))
+
+def delete_user(user_id: int):
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            # Delete reviews associated with the user
+            cur.execute('''
+                DELETE FROM Reviews WHERE user_id = %s;
+            ''', (user_id,))
+            
+            # Delete the user
+            cur.execute('''
+                DELETE FROM Users WHERE user_id = %s;
+            ''', (user_id,))
+            
+            conn.commit()
 
 def login_user(email: str, password: str, is_oauth: bool = False):
     pool = get_pool()
