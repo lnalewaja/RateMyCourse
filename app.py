@@ -362,10 +362,9 @@ def authorize():
     user = course_repo.signup_user(username, email, googlepass, is_oauth=True)
 
     if user:
-        success, user_id, user, logged_in_user = course_repo.login_user(email, googlepass, is_oauth=True)
-        print(logged_in_user)
+        success, user_id, user = course_repo.login_user(email, googlepass, is_oauth=True)
         print(user_id)
-        if logged_in_user:
+        if success:
             session['user_id'] = user_id
             if isverified(email) == True:
                 session['verified'] = True
