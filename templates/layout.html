@@ -74,32 +74,30 @@
             height: auto;
         }
 
-        #page-container {
-            position: relative;
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
-            background-color:#A7C7FA;
         }
 
-        #content-wrap {
-            padding-bottom: 2.5rem;
-            background-color:#A7C7FA;
-            /* Footer height */
+        .content-wrap {
+            background-color: #A7C7FA;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #footer {
+            width: 100%;
+            background-color: #193d5e;
+            z-index: 10;
+            margin-top: auto;
         }
 
         .banner img {
             width: 100%;
             height: auto;
             display: block;
-        }
-
-        #footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 2.5rem;
-            background-color: #0B486B;
-            /* Footer height */
-            z-index: 10;
         }
 
         .btn-custom {
@@ -175,10 +173,11 @@
                 0 2px 4px rgba(0, 0, 0, .25),
                 0 0 0 3px #c8dafc;
         }
+
         .text-centerr {
             align-items: center;
             justify-content: center;
-            background-color:#2d6498;
+            background-color: #2d6498;
             color: white;
             display: flex;
         }
@@ -193,110 +192,109 @@
 </head>
 
 <body>
-    <div id="page-container">
-        <div id="content-wrap">
-            <nav class="navbar navbar-expand-lg custom-navbar-color" style="position: fixed; width: 100%;">
-                <div class="container-fluid">
-                    <a class="navbar-brand" href="/">
-                        <img src="/static/images/newlogo.gif" alt="Logo" style="height: 50px;">
-                    </a>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item" style="display: flex;">
-                                <a class="nav-link active" style="color:white" aria-current="page" href="/">Home</a>
-                                <a class="nav-link active" style="color:white" aria-current="page"
-                                    href="{{ url_for('load_courses') }}">Courses</a>
-                                <a class="nav-link active" style="color:white" aria-current="page" href="/gpt">AI
-                                    Chat</a>
-                                {% if session.get('name') %}
-                                <a class="nav-link active" style="color:white" aria-current="page" href="/profile">Profile</a>
-                                {% endif %}
-                            </li>
-                        </ul>
-                        {% if not no_search_bar %}
-                        <div class="d-flex justify-content-center">
-                            <form action="{{ url_for('load_courses') }}" method="GET" class="d-flex">
-                                <input type="text" class="form-control" placeholder="Course Search" name="search_query">
-                                <button style="color:white" class="btn btn-outline" type="submit">Search</button>
-                            </form>
-                        </div>
-                        {% endif %}
-                        <div class="d-flex ms-auto">
+    <div class="content-wrap">
+        <nav class="navbar navbar-expand-lg custom-navbar-color" style="position: fixed; width: 100%;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <img src="/static/images/newlogo.gif" alt="Logo" style="height: 50px;">
+                </a>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item" style="display: flex;">
+                            <a class="nav-link active" style="color:white" aria-current="page" href="/">Home</a>
+                            <a class="nav-link active" style="color:white" aria-current="page"
+                                href="{{ url_for('load_courses') }}">Courses</a>
+                            <a class="nav-link active" style="color:white" aria-current="page" href="/gpt">AI
+                                Chat</a>
                             {% if session.get('name') %}
-                            {% if session.get('verified') == true %}
-                            <span style="color:white" class="navbar-text me-3">
-                                Welcome, {{ session.get('name') }}
-                                <img src="{{ url_for('static', filename='images/verified-badge.gif') }}" alt="Verified"
-                                    class="rounded-circle me-2" width="20" height="20">
-                            </span>
-                            <a href="/logout" class="btn btn-dark">Logout</a>
-                            {% else %}
-                            <span style="color:white" class="navbar-text me-3">Welcome, {{ session.get('name') }}</span>
-                            <a href="/logout" class="btn btn-dark">Logout</a>
+                            <a class="nav-link active" style="color:white" aria-current="page"
+                                href="/profile">Profile</a>
                             {% endif %}
-                            {% else %}
-                            <a href="/login" class="btn btn-light me-2" style="width: 150px;">Log In</a>
-                            <a href="/signup" class="btn btn-dark" style="width: 150px;">Sign Up</a>
-                            {% endif %}
-                        </div>
+                        </li>
+                    </ul>
+                    {% if not no_search_bar %}
+                    <div class="d-flex justify-content-center">
+                        <form action="{{ url_for('load_courses') }}" method="GET" class="d-flex">
+                            <input type="text" class="form-control" placeholder="Course Search" name="search_query">
+                            <button style="color:white" class="btn btn-outline" type="submit">Search</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    <div class="d-flex ms-auto">
+                        {% if session.get('name') %}
+                        {% if session.get('verified') == true %}
+                        <span style="color:white" class="navbar-text me-3">
+                            Welcome, {{ session.get('name') }}
+                            <img src="{{ url_for('static', filename='images/verified-badge.gif') }}" alt="Verified"
+                                class="rounded-circle me-2" width="20" height="20">
+                        </span>
+                        <a href="/logout" class="btn btn-dark">Logout</a>
+                        {% else %}
+                        <span style="color:white" class="navbar-text me-3">Welcome, {{ session.get('name') }}</span>
+                        <a href="/logout" class="btn btn-dark">Logout</a>
+                        {% endif %}
+                        {% else %}
+                        <a href="/login" class="btn btn-light me-2" style="width: 150px;">Log In</a>
+                        <a href="/signup" class="btn btn-dark" style="width: 150px;">Sign Up</a>
+                        {% endif %}
                     </div>
                 </div>
-            </nav>
-            <div style="padding: 2.5%; padding-bottom: 100px; padding-top: 100px; background-color:#A7C7FA">
-                {% block content %}
-                {% endblock %}
             </div>
-            <footer id="footer" style="background-color:#193d5e; bottom: 0; width: 100%;">
-                <div style="background-color:#193d5e; bottom: 0; width: 100%;">
-                    <div style="background-color:#193d5e; bottom: 0; width: 100%;" class="container p-4">
-                        <div style="background-color:#193d5e; bottom: 0; width: 100%;" class="row">
-                            <div class="col-lg-6 col-md-12 mb-4">
-                                <h5 class="mb-3" style="letter-spacing: 2px; color: white;">Welcome Statement</h5>
-                                <p style="color:white">
-                                    RateMyCourse is your go-to platform for honest reviews and ratings on university
-                                    courses.
-                                    Empowering students to make informed decisions, our site features real feedback from
-                                    peers
-                                    who've been in your shoes. Explore, rate, and choose your next course with
-                                    confidence.
-                                    Join our
-                                    community and navigate your academic journey with ease!
-                                </p>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <h5 class="mb-3" style="letter-spacing: 2px; color: white">links</h5>
-                                <ul class="list-unstyled mb-0">
-                                    <li class="mb-1">
-                                        <a href="/faq" style="color: white">Frequently Asked Questions</a>
-                                    </li>
-                                    <li class="mb-1">
-                                        <a href="/course_page" style="color: white">Course Search</a>
-                                    </li>
-                                    <li class="mb-1">
-                                        <a href="/login" style="color: white">Login</a>
-                                    </li>
-                                    <li>
-                                        <a href="/signup" style="color: white">Sign Up</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-lg-3 col-md-6 mb-4">
-                                <a class="navbar-brand" href="/">
-                                    <img src="/static/images/newlogo.gif" alt="Logo">
-                                </a>
-                            </div>
+        </nav>
+        <div style="padding: 2.5%; padding-bottom: 100px; padding-top: 100px; background-color:#A7C7FA">
+            {% block content %}
+            {% endblock %}
+        </div>
+        <footer id="footer" style="background-color:#193d5e; bottom: 0; width: 100%;">
+            <div style="background-color:#193d5e; bottom: 0; width: 100%;">
+                <div style="background-color:#193d5e; bottom: 0; width: 100%;" class="container p-4">
+                    <div style="background-color:#193d5e; bottom: 0; width: 100%;" class="row">
+                        <div class="col-lg-6 col-md-12 mb-4">
+                            <h5 class="mb-3" style="letter-spacing: 2px; color: white;">Welcome Statement</h5>
+                            <p style="color:white">
+                                RateMyCourse is your go-to platform for honest reviews and ratings on university
+                                courses.
+                                Empowering students to make informed decisions, our site features real feedback from
+                                peers
+                                who've been in your shoes. Explore, rate, and choose your next course with
+                                confidence.
+                                Join our
+                                community and navigate your academic journey with ease!
+                            </p>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <h5 class="mb-3" style="letter-spacing: 2px; color: white">links</h5>
+                            <ul class="list-unstyled mb-0">
+                                <li class="mb-1">
+                                    <a href="/faq" style="color: white">Frequently Asked Questions</a>
+                                </li>
+                                <li class="mb-1">
+                                    <a href="/course_page" style="color: white">Course Search</a>
+                                </li>
+                                <li class="mb-1">
+                                    <a href="/login" style="color: white">Login</a>
+                                </li>
+                                <li>
+                                    <a href="/signup" style="color: white">Sign Up</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <a class="navbar-brand" href="/">
+                                <img src="/static/images/newlogo.gif" alt="Logo">
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div style="background-color:#A7C7FA; color:white">
-                    <div class="text-centerr p-3">
-                        © 2024 Copyright: RateMyCourse
-                        <!--<a class="text-dark" href="https://mdbootstrap.com/">RateMyCourse</a> -->
-                    </div>
+            </div>
+            <div style="background-color:#A7C7FA; color:white">
+                <div class="text-centerr p-3">
+                    © 2024 Copyright: RateMyCourse
+                    <!--<a class="text-dark" href="https://mdbootstrap.com/">RateMyCourse</a> -->
                 </div>
-                <!-- Copyright -->
-            </footer>
-        </div>
+            </div>
+            <!-- Copyright -->
+        </footer>
     </div>
 
 
